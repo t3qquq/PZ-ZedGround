@@ -217,12 +217,10 @@ end
 local blinkAlpha = ZedHUDMaskHUD.blinkAlpha
 
 
+-- ZEDGROUND (11-22 t3): 방독면류(방독면·반면형·간이·화생방 마스크, 공기호흡기·방호복)를 쓰고 있으면 항상 보인다.
+-- 원본의 경고 모드(잔량 25% 이하일 때만)는 옵션째 뺐다
 local function shouldShowMaskFor(mask, cfg)
-	if not mask then return false end
-	if ZedHUDMaskOptions.getHudMode() == 2 then
-		return (not ZedHUDMask.hasDrainable(mask, cfg)) or mask:getUsedDelta() <= LOW_DELTA
-	end
-	return true
+	return mask ~= nil
 end
 
 local function blockColor(delta)

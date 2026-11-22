@@ -24,13 +24,7 @@ ZedHUDMaskOptions.PositionMode = options:addComboBox(
 ZedHUDMaskOptions.PositionMode:addItem(getText("UI_MFI_Opt_Position_Hotbar"), true)
 ZedHUDMaskOptions.PositionMode:addItem(getText("UI_MFI_Opt_Position_Free"))
 
-ZedHUDMaskOptions.HudMode = options:addComboBox(
-	"HudMode",
-	getText("UI_MFI_Opt_MaskHud"),
-	getText("UI_MFI_Opt_MaskHud_TT")
-)
-ZedHUDMaskOptions.HudMode:addItem(getText("UI_MFI_Opt_MaskHud_Always"), true)
-ZedHUDMaskOptions.HudMode:addItem(getText("UI_MFI_Opt_MaskHud_Alert"))
+-- ZEDGROUND (11-22 t3): 원본의 "방독면 HUD 표시"(항상 / 경고) 옵션은 뺐다. 방독면류를 쓰고 있으면 항상 보인다 (ZedHUDMaskHUD shouldShowMaskFor)
 
 ZedHUDMaskOptions.KeepMaskOn = options:addTickBox(
 	"KeepMaskOn",
@@ -53,11 +47,6 @@ ZedHUDMaskOptions.ShowDrainBlink = options:addTickBox(
 	getText("UI_MFI_Opt_ShowDrainBlink_TT")
 )
 
-ZedHUDMaskOptions.HudMode.onChange = function(self, box)
-	if box ~= nil and box.selected ~= nil then
-		self.selected = box.selected
-	end
-end
 ZedHUDMaskOptions.KeepMaskOn.onChange = function(self, selected)
 	self.value = selected
 end
@@ -73,11 +62,6 @@ ZedHUDMaskOptions.PositionMode.onChange = function(self, box)
 	end
 end
 
-
-function ZedHUDMaskOptions.getHudMode()
-	local o = ZedHUDMaskOptions.HudMode
-	return (o and o.selected) or 1
-end
 
 function ZedHUDMaskOptions.isKeepMaskOn()
 	local o = ZedHUDMaskOptions.KeepMaskOn
@@ -106,9 +90,6 @@ local function applyComboTooltips()
 	local maps = {
 		[ZedHUDMaskOptions.PositionMode] = {
 			defaultTooltip = getText("UI_MFI_Opt_Position_TT"),
-		},
-		[ZedHUDMaskOptions.HudMode] = {
-			defaultTooltip = getText("UI_MFI_Opt_MaskHud_TT"),
 		},
 	}
 	for opt, map in pairs(maps) do
