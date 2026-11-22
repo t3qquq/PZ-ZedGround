@@ -220,9 +220,11 @@ local function drawMapCircles(ui, tag)
     if cx then drawMapCircle(ui, ui.mapAPI, cx, cy, r, style().line) end
 end
 
-local _origWorldMapRender = ISWorldMap.render
-function ISWorldMap:render()
-    _origWorldMapRender(self)
+-- UIElement.render 순서는 (자바 지도 본체) -> lua prerender -> 자식 UI(범례·기호 패널·하단 버튼) -> lua render.
+-- render 에서 그리면 채우기가 자식 UI 까지 덮으므로 prerender 끝에서 그린다 (지도 위, UI 아래)
+local _origWorldMapPrerender = ISWorldMap.prerender
+function ISWorldMap:prerender()
+    _origWorldMapPrerender(self)
     drawMapCircles(self, "world map")
 end
 
