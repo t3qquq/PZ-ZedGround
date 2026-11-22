@@ -58,6 +58,11 @@ local function onClientCommand(module, command, player, args)
     elseif command == "Sync" then
         log("sync from " .. who .. " -> " .. state)
         toPlayer(player, "State", { state = state })
+    elseif command == "ViewStatus" then
+        -- 시점 고정 결과 (RoundManagerView.lua). 내보내기는 클라가 스스로 한다: 여기서는 기록만
+        local a = args or {}
+        log("view " .. (a.ok and "ok" or "FAILED") .. " for " .. who
+            .. ": " .. tostring(a.reason) .. " after " .. tostring(a.ms) .. " ms")
     end
 end
 Events.OnClientCommand.Add(onClientCommand)

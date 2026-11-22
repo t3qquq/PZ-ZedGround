@@ -1,0 +1,6 @@
+VERSION = 1,
+
+option RoundManager.ViewLock = {
+    type = boolean, default = true,
+    page = RoundManager, translation = RoundManager_ViewLock,
+}

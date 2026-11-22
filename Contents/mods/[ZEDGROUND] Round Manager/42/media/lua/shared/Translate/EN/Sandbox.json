@@ -1,0 +1,5 @@
+{
+  "Sandbox_RoundManager": "[ZedGround] Operations",
+  "Sandbox_RoundManager_ViewLock": "First/third person only (no isometric view)",
+  "Sandbox_RoundManager_ViewLock_tooltip": "When on, players are held in Viewpoint first person from the moment they join and the O key switches first <-> third person. Players who cannot get first/third person (no ZombieBuddy or Viewpoint) are shown a notice and sent back to the main menu (admins excepted)."
+}

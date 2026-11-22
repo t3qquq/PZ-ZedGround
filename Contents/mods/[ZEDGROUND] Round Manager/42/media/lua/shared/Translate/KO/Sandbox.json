@@ -1,0 +1,5 @@
+{
+  "Sandbox_RoundManager": "[ZedGround] 운영",
+  "Sandbox_RoundManager_ViewLock": "1·3인칭 전용 (아이소 시점 차단)",
+  "Sandbox_RoundManager_ViewLock_tooltip": "켜면 접속 직후부터 Viewpoint 1인칭으로 고정하고 O 키는 1인칭↔3인칭 전환이 됩니다. ZombieBuddy·Viewpoint 가 없어 1·3인칭이 안 되는 플레이어는 안내 후 메인 메뉴로 내보냅니다 (관리자 제외)."
+}

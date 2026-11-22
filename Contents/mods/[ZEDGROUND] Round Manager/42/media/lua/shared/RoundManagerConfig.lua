@@ -9,6 +9,7 @@
 --   C -> S  SetState { state = "WAITING" | "RUNNING" }  (admin)
 --   C -> S  Sync                                        (권한 불필요)
 --   S -> C  State { state = ... }
+--   C -> S  ViewStatus { ok, reason, ms }               (시점 고정 결과, RoundManagerView.lua. 서버는 기록만)
 
 RoundManager = RoundManager or {}
 
