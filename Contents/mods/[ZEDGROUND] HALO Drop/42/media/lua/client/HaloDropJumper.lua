@@ -19,7 +19,7 @@
 -- 강하 모델 (claude/PUBG_강하_조작명세서.md 2절 조작 / 8절 값 / 9절 조향 -- 배그 실측 11-16)
 --   자유낙하와 낙하산은 조작 체계가 다르다.
 --   자유낙하: heading(몸 방향)이 Viewpoint 카메라 방향을 FreefallTurnRate(180도/초)로 따라간다. Alt 를 누르는 동안은
---     목표를 갱신하지 않는다(자유시점). W = 카메라 방향 활공(카메라가 아래를 볼수록 수직↑ 수평↓), S = 감속,
+--     목표를 갱신하지 않는다(자유시점). 카메라 위아래 각도(camDown)도 Alt 를 누른 순간 값으로 고정한다(11-22). W = 카메라 방향 활공(카메라가 아래를 볼수록 수직↑ 수평↓), S = 감속,
 --     A / D = 방향은 그대로 두고 옆으로 이동, 달리기 키(Shift) = 카메라와 무관한 최대 속도 다이브, Ctrl = 효과 없음.
 --     자세는 입력마다 HaloDropPose 2D 블렌드 목표로 넘기고, 블렌드가 연속으로 섞는다(HaloDropPose 머리말).
 --     카메라 값이 없으면(아이소·Viewpoint 0.1.7 미만) A / D 가 heading 을 돌린다(이전 방식).
@@ -962,6 +962,20 @@ local function onPlayerUpdate(p)
         J.camMode = camOn
         log("camera steering: " .. (camOn and "ON (Viewpoint view state)" or "OFF (no view state -> A/D turns in freefall)") .. " state=" .. tostring(J.state))
     end
+    -- 자유시점(Alt): 좌우(camHdg)뿐 아니라 위아래(camDown)도 누른 순간 값으로 고정한다.
+    -- camDown 은 활공 자세(Y = 1 + camDown)와 수직·수평 속도 배분(glideMix)에 들어가서, 고정하지 않으면
+    -- Alt 를 누른 채 위아래를 볼 때 몸이 꺾이고 궤적이 바뀌었다 (11-22 t3: 좌우는 고정되는데 위아래는 휜다)
+    local freeLook = (not canopy) and keyDown(KEY_FREELOOK)
+    if freeLook then
+        if J.camDownHeld == nil then
+            J.camDownHeld = camDown
+            log(string.format("freelook: on, hold heading target=%s camDown=%.2f", tostring(J.camTarget and math.floor(J.camTarget)), camDown))
+        end
+        camDown = J.camDownHeld
+    elseif J.camDownHeld ~= nil then
+        log(string.format("freelook: off, camDown %.2f -> %.2f", J.camDownHeld, camDown))
+        J.camDownHeld = nil
+    end
 
     -- pitchTarget: 앞쪽 입력 +1, S -1. toward: 그 입력의 비율표 항목. S 가 다른 입력을 이긴다
     local pitchTarget = 0
@@ -990,7 +1004,7 @@ local function onPlayerUpdate(p)
     else
         if camOn then
             -- 자유낙하: 몸이 카메라 방향을 따라간다. Alt(자유시점) 중이거나 거의 수직으로 보는 중이면 목표를 그대로 둔다
-            if camHdg and not keyDown(KEY_FREELOOK) then J.camTarget = camHdg end
+            if camHdg and not freeLook then J.camTarget = camHdg end
             if J.camTarget then
                 local d = wrapDeg(J.camTarget - J.heading)
                 local step = HaloDrop.opt("FreefallTurnRate") * dt
