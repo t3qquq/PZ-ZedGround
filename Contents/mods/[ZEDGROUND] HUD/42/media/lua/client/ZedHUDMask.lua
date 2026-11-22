@@ -23,7 +23,8 @@ ZedHUDMask.disabled = false
 local HOLD_MS = 500
 
 -- ZEDGROUND (11-22 t3): 원본은 "필터 소진"·"예비 필터 없음"을 머리 위 말풍선(setHaloNote)으로 띄운다.
--- 1·3인칭(Viewpoint)에서는 머리 위가 안 보이므로 HUD 알림(ZedHUDMaskHUD.showNotice, 방독면 막대 위)으로 옮긴다.
+-- 1·3인칭(Viewpoint)에서는 머리 위가 안 보이므로 "예비 필터 없음"은 HUD 알림(ZedHUDMaskHUD.showNotice, 방독면 막대 위)으로,
+-- "필터 소진"은 막대 위에 계속 붙는 글자(ZedHUDMaskHUD renderMaskSection)로 옮겼다.
 local function notify(key, why)
 	ZedHUD.log("mask: notice " .. tostring(key) .. " (" .. tostring(why) .. ")")
 	ZedHUDMaskHUD.showNotice(getText(key))
@@ -566,10 +567,10 @@ local function checkDrainableEmpty()
 	end
 	local id = mask:getID()
 	local hasAmount = mask:getUsedDelta() > 0
-	if id == lastMaskId and lastHadAmount and not hasAmount
-			and ZedHUDMaskOptions and ZedHUDMaskOptions.isNotifyEmpty() then
-		local key = cfg.isTank and "UI_MFI_TankEmpty" or "UI_MFI_FilterEmpty"
-		notify(key, "worn " .. (cfg.isTank and "tank" or "filter") .. " ran out")
+	-- ZEDGROUND (11-22 t3): 소진 표시는 잠깐 뜨는 알림이 아니라 막대 위에 계속 붙어 있다 (ZedHUDMaskHUD renderMaskSection).
+	-- 여기서는 소진 순간만 로그로 남긴다
+	if id == lastMaskId and lastHadAmount and not hasAmount then
+		ZedHUD.log("mask: worn " .. (cfg.isTank and "tank" or "filter") .. " ran out (" .. tostring(mask:getFullType()) .. ")")
 	end
 	lastMaskId = id
 	lastHadAmount = hasAmount

@@ -270,6 +270,17 @@ function ZedHUDMaskHUD:renderMaskSection(rowY)
 		end
 		self:drawRect(barX + fillW - tipW, rowY, tipW, BLOCK_H, blinkAlpha(self.drainStrength, fillA), r, g, b)
 	end
+	-- ZEDGROUND (11-22 t3): 필터(산소통)가 끼워진 채 0 이면 "필터 소진"("산소통 소진")을 빈 막대 위 가운데에 계속 표시한다.
+	-- 원본은 소진 순간 머리 위 말풍선을 잠깐 띄웠다. 모드 옵션 "필터가 다 닳으면 알림 표시"로 끌 수 있다
+	if hasFilter and delta <= 0 and ZedHUDMaskOptions.isNotifyEmpty() then
+		local text = getText(isTank and "UI_MFI_TankEmpty" or "UI_MFI_FilterEmpty")
+		local fh = getTextManager():getFontHeight(UIFont.Small)
+		local tx = barX + math.floor(trackW / 2)
+		local ty = rowY + math.floor((BLOCK_H - fh) / 2)
+		local a = self.fadeAlpha
+		self:drawTextCentre(text, tx + 1, ty + 1, 0, 0, 0, 0.8 * a, UIFont.Small)
+		self:drawTextCentre(text, tx, ty, 1, 80 / 255, 80 / 255, a, UIFont.Small)
+	end
 	if isTank then
 		local lx = barX + BLOCKS * (bw + GAP) - GAP + GAP * 2
 		self.ledRect = { x = lx, y = rowY, w = LED_W, h = MASK_H }
@@ -377,7 +388,8 @@ end
 local hudInstance = nil
 
 -- ── ZEDGROUND: 방독면 알림 (원본의 머리 위 말풍선 대신) ─────────────
--- "필터 소진"·"예비 필터 없음" 등을 방독면 막대 바로 위 가운데에 NOTICE_MS 동안 띄우고 끝에 흐려진다.
+-- "예비 필터 없음"·"예비 산소통 없음"을 방독면 막대 바로 위 가운데에 NOTICE_MS 동안 띄우고 끝에 흐려진다.
+-- ("필터 소진"은 11-22 부터 잠깐 뜨지 않고 막대 위에 계속 붙는다 - renderMaskSection)
 -- 방독면 막대가 안 보이면(경고 모드에서 잔량이 많을 때 등) 핫바 위, 핫바도 없으면 화면 아래쪽 가운데.
 -- 색은 원본 말풍선과 같은 빨강(255, 80, 80). 마우스를 먹지 않는다.
 ZedHUDMaskNotice = ISUIElement:derive("ZedHUDMaskNotice")
