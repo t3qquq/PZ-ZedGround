@@ -10,6 +10,7 @@
 --   C -> S  Sync                                        (권한 불필요)
 --   S -> C  State { state = ... }
 --   C -> S  ViewStatus { ok, reason, ms }               (시점 고정 결과, ZedManagerView.lua. 서버는 기록만)
+--   C -> S  ReadingRefresh { skill }                    (책 구간 배율, ZedManagerReading.lua. 권한 불필요)
 
 ZedManager = ZedManager or {}
 

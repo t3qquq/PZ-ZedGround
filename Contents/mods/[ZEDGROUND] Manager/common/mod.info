@@ -1,8 +1,8 @@
 name=[ZEDGROUND] Manager
 id=t3ZedManager
-description=운영자 제어판·판 상태·시점 고정·캐릭터 초기화·사망 처리
+description=운영자 제어판·판 상태·시점 고정·책 구간 배율·캐릭터 초기화·사망 처리
 versionMin=42.21
-modversion=0.3.0
+modversion=0.4.0
 javaJarFile=media/java/client/ZedManagerView.jar
 javaPkgName=t3zedmanager
 ZBVersionMin=2.0.0

@@ -3,5 +3,7 @@
   "Sandbox_ZedManager_ViewLock": "First/third person only (no isometric view)",
   "Sandbox_ZedManager_ViewLock_tooltip": "When on, players are held in Viewpoint first person from the moment they join. The O key (isometric switch) is blocked and Shift+O switches first <-> third person only. Players who cannot get first/third person (no ZombieBuddy or Viewpoint) are shown a notice and sent back to the main menu (admins excepted).",
   "Sandbox_ZedManager_AdminIsometric": "Admins may use the isometric view",
-  "Sandbox_ZedManager_AdminIsometric_tooltip": "When checked, admins are not held and can switch to the isometric view with the O key. Uncheck to hold admins in first/third person too."
+  "Sandbox_ZedManager_AdminIsometric_tooltip": "When checked, admins are not held and can switch to the isometric view with the O key. Uncheck to hold admins in first/third person too.",
+  "Sandbox_ZedManager_ReadingBrackets": "Skill book level brackets (read any book at any level)",
+  "Sandbox_ZedManager_ReadingBrackets_tooltip": "When on, any skill book can be read at any level, and each book read gives its XP multiplier only inside the levels it covers: volume 1 levels 0-1, volume 2 levels 2-3, volume 3 levels 4-5, volume 4 levels 6-7, volume 5 levels 8-9. Example: after reading volumes 1, 3 and 5 the multiplier applies only at levels 0-1, 4-5 and 8-9. A book whose range you have already passed still cannot be read, as in vanilla. When off, reading is vanilla. Reading speed is set with the vanilla Minutes Per Page option."
 }

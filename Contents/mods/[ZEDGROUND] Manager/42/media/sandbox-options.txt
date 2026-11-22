@@ -9,3 +9,8 @@ option ZedManager.AdminIsometric = {
     type = boolean, default = true,
     page = ZedManager, translation = ZedManager_AdminIsometric,
 }
+
+option ZedManager.ReadingBrackets = {
+    type = boolean, default = true,
+    page = ZedManager, translation = ZedManager_ReadingBrackets,
+}
