@@ -1,7 +1,7 @@
 -- Blue Zone 어드민 메뉴: 월드 우클릭 -> 자기장 하위 메뉴
 -- 클라는 메뉴 표시만 거른다. 실제 권한 검사는 서버(BlueZoneServer.lua onClientCommand)가 한다.
--- Round Manager 제어판도 같은 명령을 보내면 된다 (이 메뉴는 Manager 없이 테스트할 때용).
--- 다른 모드(Round Manager)가 BlueZone.adminMenuHidden = true 를 세우면 이 메뉴는 숨는다.
+-- Manager 제어판도 같은 명령을 보내면 된다 (이 메뉴는 Manager 없이 테스트할 때용).
+-- 다른 모드(Manager)가 BlueZone.adminMenuHidden = true 를 세우면 이 메뉴는 숨는다.
 
 if isServer() then return end
 

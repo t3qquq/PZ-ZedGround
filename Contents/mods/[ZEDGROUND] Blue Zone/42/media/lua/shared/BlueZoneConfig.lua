@@ -10,9 +10,9 @@
 --   축소 중 파란 원은 중심·반지름 모두 흰 원으로 선형 보간한다.
 --   마지막 페이즈의 흰 원 반지름은 0 (배그처럼 끝까지 닫힘). done 에서도 데미지는 계속된다.
 --
--- 진입점 (다른 모드·Round Manager 가 부르는 것): 모듈 BlueZone.MODULE 로 sendClientCommand
+-- 진입점 (다른 모드·Manager 가 부르는 것): 모듈 BlueZone.MODULE 로 sendClientCommand
 --   Start      대기 상태에서만. 새 라운드 시작 (진행 중이면 무시 - 먼저 Stop)
---              args { cx, cy } (선택): 페이즈 1 흰 원 중심 힌트. Round Manager 가 HALO Drop 비행 경로 근처를 넘길 용도.
+--              args { cx, cy } (선택): 페이즈 1 흰 원 중심 힌트. Manager 가 HALO Drop 비행 경로 근처를 넘길 용도.
 --              원이 영역 안에 들어가게 잘린다. 없으면 영역 안 무작위
 --   Pause      일시정지. 타이머와 데미지가 멈춘다 (멱등)
 --   Resume     재개 (멱등)

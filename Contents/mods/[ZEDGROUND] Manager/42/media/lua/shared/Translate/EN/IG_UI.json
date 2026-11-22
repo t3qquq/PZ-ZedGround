@@ -1,0 +1,10 @@
+{
+  "IGUI_ZedManager_View_Title": "This server is first/third person only",
+  "IGUI_ZedManager_View_Wait": "Preparing the view...",
+  "IGUI_ZedManager_View_NoViewpoint": "Viewpoint is not running.",
+  "IGUI_ZedManager_View_NoJar": "The view lock module did not load. (Check that you allowed it in the ZombieBuddy approval window)",
+  "IGUI_ZedManager_View_NotEnabled": "Could not switch to first/third person.",
+  "IGUI_ZedManager_View_HowTo": "Install ZombieBuddy and Viewpoint, allow the approval window shown when joining, then join again.",
+  "IGUI_ZedManager_View_ExitIn": "Leaving to the main menu in %1 s.",
+  "IGUI_ZedManager_View_NoIsometric": "The isometric view is not available on this server."
+}

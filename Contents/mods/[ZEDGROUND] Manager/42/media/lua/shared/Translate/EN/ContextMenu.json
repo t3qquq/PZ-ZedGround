@@ -1,0 +1,20 @@
+{
+  "ContextMenu_ZedManager": "ZEDGROUND control",
+  "ContextMenu_ZedManager_TeleportRig": "Go to oil rig spawn (me only)",
+  "ContextMenu_ZedManager_ModOff": "This mod is not enabled on the server.",
+  "ContextMenu_ZedManager_HaloDrop": "HALO Drop",
+  "ContextMenu_ZedManager_HaloDrop_Start": "Start drop (route prep)",
+  "ContextMenu_ZedManager_HaloDrop_Launch": "Skip route prep and launch",
+  "ContextMenu_ZedManager_HaloDrop_Stop": "End drop",
+  "ContextMenu_ZedManager_BlueZone": "Containment zone",
+  "ContextMenu_ZedManager_BlueZone_Start": "Start containment",
+  "ContextMenu_ZedManager_BlueZone_Pause": "Pause",
+  "ContextMenu_ZedManager_BlueZone_Resume": "Resume",
+  "ContextMenu_ZedManager_BlueZone_NextPhase": "Next step (wait: start shrinking now, shrink: finish now)",
+  "ContextMenu_ZedManager_BlueZone_Stop": "Stop containment",
+  "ContextMenu_ZedManager_State": "Round state: %1",
+  "ContextMenu_ZedManager_State_Waiting": "waiting",
+  "ContextMenu_ZedManager_State_Running": "running",
+  "ContextMenu_ZedManager_State_SetWaiting": "Set to waiting",
+  "ContextMenu_ZedManager_State_SetRunning": "Set to running"
+}

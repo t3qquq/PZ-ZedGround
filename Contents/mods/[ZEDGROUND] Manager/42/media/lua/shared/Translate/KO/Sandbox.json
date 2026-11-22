@@ -1,0 +1,7 @@
+{
+  "Sandbox_ZedManager": "[ZedGround] 운영",
+  "Sandbox_ZedManager_ViewLock": "1·3인칭 전용 (아이소 시점 차단)",
+  "Sandbox_ZedManager_ViewLock_tooltip": "켜면 접속 직후부터 Viewpoint 1인칭으로 고정합니다. O 키(아이소 전환)는 막히고 Shift+O 로 1인칭↔3인칭만 바꿀 수 있습니다. ZombieBuddy·Viewpoint 가 없어 1·3인칭이 안 되는 플레이어는 안내 후 메인 메뉴로 내보냅니다 (관리자 제외).",
+  "Sandbox_ZedManager_AdminIsometric": "관리자는 아이소 시점 허용",
+  "Sandbox_ZedManager_AdminIsometric_tooltip": "체크하면 관리자는 시점 고정 대상에서 빠져 O 키로 아이소 시점을 쓸 수 있습니다. 체크를 풀면 관리자도 1·3인칭으로 고정됩니다."
+}

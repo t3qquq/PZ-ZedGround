@@ -1,0 +1,11 @@
+VERSION = 1,
+
+option ZedManager.ViewLock = {
+    type = boolean, default = true,
+    page = ZedManager, translation = ZedManager_ViewLock,
+}
+
+option ZedManager.AdminIsometric = {
+    type = boolean, default = true,
+    page = ZedManager, translation = ZedManager_AdminIsometric,
+}

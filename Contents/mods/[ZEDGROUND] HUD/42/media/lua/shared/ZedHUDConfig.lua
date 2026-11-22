@@ -1,6 +1,6 @@
 -- ZEDGROUND HUD : shared config
 -- 표시 전용 모드. 다른 ZEDGROUND 모드를 require 하지 않는다.
--- Round Manager / Blue Zone 은 전역 테이블이 있을 때만 읽는다 (ZedHUD.source*).
+-- Manager / Blue Zone 은 전역 테이블이 있을 때만 읽는다 (ZedHUD.source*).
 
 ZedHUD = ZedHUD or {}
 ZedHUD.MODULE = "ZedHUD"

@@ -7,10 +7,10 @@ require "ZedHUDZone"
 ZedHUD.compass = nil
 ZedHUD.zone = nil
 
--- 생존자 수: Round Manager 가 RoundManager.aliveCount() 를 열면 읽는다 (아직 미구현)
+-- 생존자 수: Manager 가 ZedManager.aliveCount() 를 열면 읽는다 (아직 미구현)
 function ZedHUD.sourceAlive()
-    if RoundManager and RoundManager.aliveCount then
-        return RoundManager.aliveCount()
+    if ZedManager and ZedManager.aliveCount then
+        return ZedManager.aliveCount()
     end
     return nil
 end
@@ -60,7 +60,7 @@ end
 local function onGameStart()
     createCompass()
     createZone()
-    ZedHUD.log("sources: RoundManager=" .. tostring(RoundManager ~= nil)
+    ZedHUD.log("sources: ZedManager=" .. tostring(ZedManager ~= nil)
         .. " BlueZone=" .. tostring(BlueZone ~= nil))
 end
 
