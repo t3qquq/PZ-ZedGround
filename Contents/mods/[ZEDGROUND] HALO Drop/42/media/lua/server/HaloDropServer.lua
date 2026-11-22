@@ -33,6 +33,24 @@ local CHUTE_SWEEP_MS     = { 1500, 4000, 8000 }   -- 착지 뒤 낙하산 재확
 
 local R = nil
 local _roundSeq = 0
+
+-- 다른 서버 모드용 공개 진입점 (ZEDGROUND Manager 의 "라운드 시작" 등, 11-22).
+-- Halo Drop 은 누가 부르는지 모른다: 함수와 이벤트만 열어 둔다.
+--   HaloDrop.Server.phase()          "idle" | "prep" | "flight" | "ended"
+--   HaloDrop.Server.start(starter)   어드민 Start 와 같다. 라운드가 이미 열려 있으면 false
+--   HaloDrop.Server.stop(reason)     어드민 Stop 과 같다 (준비 중·착지 대기면 정리, 비행 중이면 종료 -> 전원 강제 강하)
+--   HaloDrop.Server.onEvent(fn)      fn(ev, info). ev = "launch"(수송기 출발, info.id/durMs) | "closed"(라운드 정리, info.id/reason)
+HaloDrop.Server = HaloDrop.Server or {}
+HaloDrop.Server.listeners = HaloDrop.Server.listeners or {}
+function HaloDrop.Server.onEvent(fn)
+    table.insert(HaloDrop.Server.listeners, fn)
+end
+local function emit(ev, info)
+    for _, fn in ipairs(HaloDrop.Server.listeners) do
+        local ok, err = pcall(fn, ev, info)
+        if not ok then HaloDrop.log("server event " .. tostring(ev) .. " listener FAILED err=" .. tostring(err)) end
+    end
+end
 local _nextStatus = 0
 local _chuteSweeps = {}   -- [key] = { p = IsoPlayer, at = { ms... } }
 
@@ -549,6 +567,7 @@ local function launchRound(why)
         R.fl.ax, R.fl.ay, R.fl.bx, R.fl.by, R.fl.length, speed, R.fl.durMs, n))
     -- 수송기 차량은 각자 점프하는 순간 그 자리에 띄운다 (jumpPlanesTick)
     toClients("Flight", flightArgs())
+    emit("launch", { id = R.id, durMs = R.fl.durMs, members = n })
 end
 
 -- 시작: 경로를 정하고 경로 준비(C안)에 들어간다. 에이전트가 없거나 꺼져 있으면 바로 출발
@@ -621,7 +640,9 @@ local function closeRound(reason)
     jumpPlanesRemoveAll("round close")
     log("round " .. tostring(R.id) .. " closed (" .. tostring(reason) .. ")")
     toClients("Closed", { id = R.id })
+    local id = R.id
     R = nil
+    emit("closed", { id = id, reason = reason })
 end
 
 local function allLanded()
@@ -671,6 +692,34 @@ local function isAdminPlayer(p)
     return p:isAccessLevel("admin")
 end
 
+function HaloDrop.Server.phase()
+    if not R then return "idle" end
+    if R.prep or not R.startAt then return "prep" end
+    if R.ended then return "ended" end
+    return "flight"
+end
+
+function HaloDrop.Server.start(starter)
+    if R then
+        log("Server.start ignored: round " .. tostring(R.id) .. " still open (" .. HaloDrop.Server.phase() .. ")")
+        return false
+    end
+    startRound(starter)
+    return R ~= nil
+end
+
+function HaloDrop.Server.stop(reason)
+    if not R then return end
+    if R.prep then
+        HaloDropPreload.pregenReport(R.prep, nowMs())
+        closeRound(tostring(reason) .. " during route prep")
+    elseif R.ended then
+        closeRound(reason)
+    else
+        endRound(reason)
+    end
+end
+
 local function onClientCommand(module, command, player, args)
     if module ~= HaloDrop.MODULE then return end
     local key = HaloDrop.playerKey(player)
@@ -692,14 +741,7 @@ local function onClientCommand(module, command, player, args)
             log("Stop denied for " .. tostring(player:getUsername()))
             return
         end
-        if R and R.prep then
-            HaloDropPreload.pregenReport(R.prep, nowMs())
-            closeRound("admin stop during route prep")
-        elseif R and R.ended then
-            closeRound("admin stop")
-        else
-            endRound("admin stop")
-        end
+        HaloDrop.Server.stop("admin stop")
     elseif command == "Jumped" then
         if not R or args.id ~= R.id then return end
         local m = R.members[key]

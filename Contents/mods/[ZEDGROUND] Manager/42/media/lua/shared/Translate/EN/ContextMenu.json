@@ -16,5 +16,7 @@
   "ContextMenu_ZedManager_State_Waiting": "waiting",
   "ContextMenu_ZedManager_State_Running": "running",
   "ContextMenu_ZedManager_State_SetWaiting": "Set to waiting",
-  "ContextMenu_ZedManager_State_SetRunning": "Set to running"
+  "ContextMenu_ZedManager_State_SetRunning": "Set to running",
+  "ContextMenu_ZedManager_Round_Start": "Start round (plane, then containment zone automatically)",
+  "ContextMenu_ZedManager_Round_Stop": "End round (stop the drop and the containment zone)"
 }

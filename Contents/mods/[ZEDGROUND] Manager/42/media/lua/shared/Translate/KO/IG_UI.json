@@ -6,5 +6,7 @@
   "IGUI_ZedManager_View_NotEnabled": "1·3인칭 시점으로 전환하지 못했습니다.",
   "IGUI_ZedManager_View_HowTo": "ZombieBuddy 와 Viewpoint 를 설치하고, 접속할 때 뜨는 승인 창을 허용한 뒤 다시 접속하세요.",
   "IGUI_ZedManager_View_ExitIn": "%1초 뒤 메인 메뉴로 나갑니다.",
-  "IGUI_ZedManager_View_NoIsometric": "이 서버에서는 쿼터뷰(아이소) 시점으로 전환할 수 없습니다."
+  "IGUI_ZedManager_View_NoIsometric": "이 서버에서는 쿼터뷰(아이소) 시점으로 전환할 수 없습니다.",
+  "IGUI_ZedManager_Round_Busy": "이미 진행 중인 강하나 봉쇄 구역이 있습니다. 라운드 종료 후 다시 시작하세요.",
+  "IGUI_ZedManager_Round_NoMods": "공수 강하와 봉쇄 구역 모드가 모두 꺼져 있습니다."
 }

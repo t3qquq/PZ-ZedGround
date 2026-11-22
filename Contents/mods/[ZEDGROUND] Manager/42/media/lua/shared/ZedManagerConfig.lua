@@ -7,6 +7,8 @@
 -- 판 상태: WAITING(대기) / RUNNING(진행 중). 사망 처리 분기용 하나만 둔다.
 -- 명령 (모듈 ZedManager.MODULE)
 --   C -> S  SetState { state = "WAITING" | "RUNNING" }  (admin)
+--   C -> S  RoundStart / RoundStop                      (admin. 판 상태 + 공수 강하 + 봉쇄 구역을 한 번에, ZedManagerServer.lua)
+--   S -> C  Notice { key }                              (라운드 시작 거절 이유 등, IG_UI 번역 키)
 --   C -> S  Sync                                        (권한 불필요)
 --   S -> C  State { state = ... }
 --   C -> S  ViewStatus { ok, reason, ms }               (시점 고정 결과, ZedManagerView.lua. 서버는 기록만)

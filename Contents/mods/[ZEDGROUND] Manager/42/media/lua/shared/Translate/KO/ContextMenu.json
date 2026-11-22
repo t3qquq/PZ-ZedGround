@@ -16,5 +16,7 @@
   "ContextMenu_ZedManager_State_Waiting": "대기",
   "ContextMenu_ZedManager_State_Running": "진행 중",
   "ContextMenu_ZedManager_State_SetWaiting": "대기로 전환",
-  "ContextMenu_ZedManager_State_SetRunning": "진행 중으로 전환"
+  "ContextMenu_ZedManager_State_SetRunning": "진행 중으로 전환",
+  "ContextMenu_ZedManager_Round_Start": "라운드 시작 (수송기 → 봉쇄 구역 자동)",
+  "ContextMenu_ZedManager_Round_Stop": "라운드 종료 (강하·봉쇄 구역 모두 끄기)"
 }

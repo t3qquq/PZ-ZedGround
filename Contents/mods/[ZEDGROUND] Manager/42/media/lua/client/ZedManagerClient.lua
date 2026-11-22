@@ -5,6 +5,7 @@
 --   ZedManager.isAvailable(key)         대상 모드가 켜져 있나 (버튼 활성화 판단)
 --   ZedManager.call(key, command)       대상 모드 진입점 호출
 --   ZedManager.setState(state)          판 상태 변경 요청
+--   ZedManager.round(start)             라운드 시작(true) / 종료(false) 요청 (수송기 -> 봉쇄 구역 자동, ZedManagerServer.lua)
 --   ZedManager.requestSync(why)         판 상태를 서버에 다시 묻는다
 --
 -- 판 상태 받기 (11-19 long 런: 접속 직후 OnGameStart 에서 한 번 보낸 Sync 에 답이 없어 메뉴가 내내 "판 상태: ?" 였다.
@@ -43,6 +44,12 @@ function RM.setState(s)
     sendClientCommand(p, RM.MODULE, "SetState", { state = s })
 end
 
+function RM.round(start)
+    local p = getPlayer()
+    if not p then return end
+    sendClientCommand(p, RM.MODULE, start and "RoundStart" or "RoundStop", {})
+end
+
 local SYNC_RETRY_MS = 2000
 local SYNC_MAX = 30
 local syncTries, nextSync = 0, 0
@@ -78,6 +85,12 @@ function RM.onServerCommand(module, command, args)
             log("state: " .. tostring(RM.state) .. " -> " .. tostring(args.state))
         end
         RM.state = args.state
+    elseif command == "Notice" then
+        -- 서버가 거절한 이유 등 (라운드 시작). 누른 관리자 머리 위 대신 화면 가운데 알림 줄에 띄운다
+        local p = getPlayer()
+        local key = args and args.key
+        log("notice " .. tostring(key))
+        if p and key then HaloTextHelper.addBadText(p, getText(key)) end
     end
 end
 Events.OnServerCommand.Add(RM.onServerCommand)

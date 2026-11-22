@@ -442,3 +442,23 @@ local function onClientCommand(module, command, player, args)
     end
 end
 Events.OnClientCommand.Add(onClientCommand)
+
+-- 다른 서버 모드용 공개 진입점 (ZEDGROUND Manager 의 "라운드 시작" 등, 11-22). Blue Zone 은 누가 부르는지 모른다.
+--   BlueZone.Server.running()             라운드가 돌고 있나
+--   BlueZone.Server.start(by, hx, hy)     어드민 Start 와 같다 (hx, hy = 첫 원 중심 힌트, 없으면 무작위). 이미 돌고 있으면 false
+--   BlueZone.Server.stop(reason)          어드민 Stop 과 같다
+B.Server = B.Server or {}
+function B.Server.running()
+    return S ~= nil
+end
+function B.Server.start(by, hx, hy)
+    if S then
+        log("Server.start ignored: round " .. tostring(S.id) .. " already running")
+        return false
+    end
+    startRound(by, hx, hy)
+    return true
+end
+function B.Server.stop(reason)
+    stopRound(reason)
+end

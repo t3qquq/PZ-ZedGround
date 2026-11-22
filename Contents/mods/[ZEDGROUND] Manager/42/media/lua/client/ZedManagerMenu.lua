@@ -1,5 +1,6 @@
 -- Manager 운영 메뉴: 월드 우클릭 -> "ZEDGROUND 운영" 하나로 묶는다
---   판 상태                : 대기 <-> 진행 중 (맨 위: 다른 조작의 전제)
+--   라운드 시작 / 종료     : 맨 위. 시작 = 판 상태 진행 중 + 공수 강하 + 수송기 출발 때 봉쇄 구역 자동 (ZedManagerServer.lua)
+--   판 상태                : 대기 <-> 진행 중 (수동)
 --   공수 강하 (HALO Drop)  : 시작 / 경로 준비 건너뛰고 출발 / 종료
 --   봉쇄 구역 (Blue Zone)  : 시작 / 일시정지·재개 / 다음 구간 / 종료
 --   오일리그로 이동        : 누른 관리자 자기 캐릭터만 대기실 스폰 지점으로 (다른 플레이어는 그대로)
@@ -45,6 +46,21 @@ end
 local function onSetState(p, s)
     log("menu -> state " .. tostring(s))
     RM.setState(s)
+end
+
+local function onRound(p, start)
+    log("menu -> round " .. (start and "start" or "stop"))
+    RM.round(start)
+end
+
+-- 진행 중이 아니면 시작, 진행 중이면 종료. 판 상태를 아직 모르면 둘 다 보인다
+local function fillRound(menu, p)
+    if RM.state ~= RM.STATE.RUNNING then
+        menu:addOption(getText("ContextMenu_ZedManager_Round_Start"), p, onRound, true)
+    end
+    if RM.state ~= RM.STATE.WAITING then
+        menu:addOption(getText("ContextMenu_ZedManager_Round_Stop"), p, onRound, false)
+    end
 end
 
 -- 대상 모드가 꺼져 있을 때: 회색 항목 + 툴팁
@@ -146,6 +162,7 @@ local function onFill(playerNum, context, worldobjects, test)
     if not p or not canUse(p) then return end
     if test then return ISWorldObjectContextMenu.setTest() end
     local menu = addSub(context, getText("ContextMenu_ZedManager"))
+    fillRound(menu, p)
     fillState(menu, p)
     fillHaloDrop(menu, p)
     fillBlueZone(menu, p)
