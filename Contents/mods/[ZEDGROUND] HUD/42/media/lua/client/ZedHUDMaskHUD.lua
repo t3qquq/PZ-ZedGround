@@ -161,6 +161,7 @@ local TOXIC_DRAIN = 0.01
 -- 서버(BlueZoneServer maskAbsorb)가 깎는 양 = 초당 dps x DamageScale x MaskDrainScale / 100. 독성 건물(TOXIC_DRAIN)을 1 로 본 비율.
 -- Blue Zone 이 없거나 라운드가 없거나 구역 안이면 0
 local GAS_STYLE = 2
+local TANK_GAS_BLINK = 0.1   -- blinkAlpha 주기 약 1초
 local _gasLogged = nil
 local function gasDrainStrength(playerObj)
 	local B = BlueZone
@@ -184,10 +185,12 @@ end
 function ZedHUDMaskHUD.getFilterDrainStrength(playerObj, mask, cfg)
 	if not mask or not cfg then return 0 end
 	-- ZEDGROUND (11-22): 공기호흡기·방호복은 켜져 있는 동안 늘 닳아서 원본은 깜빡이지 않는다.
-	-- 봉쇄 구역 독가스를 막고 있을 때(BlueZoneServer findMask "tank")만 깜빡인다
+	-- 봉쇄 구역 독가스를 막고 있을 때(BlueZoneServer findMask "tank")만 깜빡인다. 산소통은 독가스 세기와 상관없이
+	-- 바닐라 속도로만 닳으므로(BlueZoneServer maskAbsorb) 깜빡임 빠르기도 TANK_GAS_BLINK 하나로 고정
 	if cfg.isTank then
 		if not (mask:isActivated() and mask:hasTank() and mask:getUsedDelta() > 0) then return 0 end
-		return gasDrainStrength(playerObj)
+		if gasDrainStrength(playerObj) > 0 then return TANK_GAS_BLINK end
+		return 0
 	end
 	if not mask:hasFilter() or mask:getUsedDelta() <= 0 then return 0 end
 	local gas = gasDrainStrength(playerObj)

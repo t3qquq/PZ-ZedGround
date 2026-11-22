@@ -234,8 +234,9 @@ end
 
 -- 독가스 연출(Style 2) 전용: 방독면과 기침
 -- 방독면(필터가 남은 방독면·방진 마스크·급조 방독면)은 배그 전파 방해 배낭처럼 데미지를 대신 받는다:
---   (11-22) 켜져 있고 산소통이 남은 공기호흡기·방호복(태그 base:scba)도 같은 규칙으로 막는다. 산소통 잔량도 usedDelta 라
---   필터와 같은 식으로 깎는다. 바닐라의 켜짐 소모(IsoGameCharacter.checkSCBADrain)는 그대로 겹친다. 바닐라처럼 공기호흡기가 먼저다.
+--   (11-22) 켜져 있고 산소통이 남은 공기호흡기·방호복(태그 base:scba)도 데미지·기침을 막는다. 바닐라처럼 공기호흡기가 먼저다.
+--   산소통은 독가스로 따로 깎지 않는다 - 바닐라 켜짐 소모(IsoGameCharacter.checkSCBADrain, 차수와 무관하게 일정)만 받는다.
+--   최고 등급 차단 장비라 후반 차수에서 필터보다 오래 버텨야 한다 (11-22 t3). 다 닳으면 바닐라가 끄고, 다음 판정부터 데미지가 들어온다.
 --   필터가 남아 있는 동안 체력 데미지·기침 없음, 필터가 (받을 데미지 x MaskDrainScale / 100) 만큼 준다.
 --   꽉 찬 필터(1.0)는 체력 100 / MaskDrainScale 만큼 막는다 (기본 0.2 = 체력 500). 페이즈 데미지가 크면 그만큼 빨리 닳는다.
 --   필터 잔량은 바닐라 Clothing 의 usedDelta(0~1, 시체 악취 방어와 같은 값)를 그대로 쓴다.
@@ -264,9 +265,10 @@ end
 
 local function maskAbsorb(p, mask, kind, amount, key)
     local before = mask:getUsedDelta()
-    local left = before - amount * B.opt("MaskDrainScale") / 100
+    local left = before
+    if kind ~= "tank" then left = before - amount * B.opt("MaskDrainScale") / 100 end
     if left < 0 then left = 0 end
-    mask:setUsedDelta(left)
+    if kind ~= "tank" then mask:setUsedDelta(left) end
     S.mask = S.mask or {}
     local m = S.mask[key]
     if not m then
@@ -279,6 +281,8 @@ local function maskAbsorb(p, mask, kind, amount, key)
         S.mask[key] = nil
         log(string.format("mask %s %s depleted (%s)", tostring(p:getUsername()), tostring(kind), tostring(mask:getFullType())))
     end
+    -- 산소통도 주기적으로 보낸다: 바닐라 drainSCBA 는 서버·클라가 각자 깎고 동기화하지 않아서(drainGasMask 와 달리)
+    -- 클라 HUD 잔량이 서버(보호 판정 기준)와 어긋날 수 있다
     if isServer() and (left <= 0 or m.ticks % MASK_SYNC_TICKS == 0) then mask:syncItemFields() end
 end
 
