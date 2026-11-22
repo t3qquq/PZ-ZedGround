@@ -234,6 +234,8 @@ end
 
 -- 독가스 연출(Style 2) 전용: 방독면과 기침
 -- 방독면(필터가 남은 방독면·방진 마스크·급조 방독면)은 배그 전파 방해 배낭처럼 데미지를 대신 받는다:
+--   (11-22) 켜져 있고 산소통이 남은 공기호흡기·방호복(태그 base:scba)도 같은 규칙으로 막는다. 산소통 잔량도 usedDelta 라
+--   필터와 같은 식으로 깎는다. 바닐라의 켜짐 소모(IsoGameCharacter.checkSCBADrain)는 그대로 겹친다. 바닐라처럼 공기호흡기가 먼저다.
 --   필터가 남아 있는 동안 체력 데미지·기침 없음, 필터가 (받을 데미지 x MaskDrainScale / 100) 만큼 준다.
 --   꽉 찬 필터(1.0)는 체력 100 / MaskDrainScale 만큼 막는다 (기본 0.2 = 체력 500). 페이즈 데미지가 크면 그만큼 빨리 닳는다.
 --   필터 잔량은 바닐라 Clothing 의 usedDelta(0~1, 시체 악취 방어와 같은 값)를 그대로 쓴다.
@@ -243,16 +245,24 @@ local COUGH_MIN_MS, COUGH_MAX_MS = 4000, 8000
 local MOAN_CHANCE = 35          -- % : 기침 대신 고통 신음
 local MASK_SYNC_TICKS = 5       -- 필터 잔량을 클라에 보내는 주기(데미지 틱 수)
 
+-- 두 번째 값: "tank"(공기호흡기·방호복) / "filter"(방독면류). 로그용
 local function findMask(p)
     local worn = p:getWornItems()
+    local filter = nil
     for i = 0, worn:size() - 1 do
         local it = worn:getItemByIndex(i)
-        if it and instanceof(it, "Clothing") and it:hasFilter() and it:getUsedDelta() > 0 then return it end
+        if it and instanceof(it, "Clothing") then
+            if it:hasTag(ItemTag.SCBA) and it:isActivated() and it:hasTank() and it:getUsedDelta() > 0 then
+                return it, "tank"
+            end
+            if not filter and it:hasFilter() and it:getUsedDelta() > 0 then filter = it end
+        end
     end
+    if filter then return filter, "filter" end
     return nil
 end
 
-local function maskAbsorb(p, mask, amount, key)
+local function maskAbsorb(p, mask, kind, amount, key)
     local before = mask:getUsedDelta()
     local left = before - amount * B.opt("MaskDrainScale") / 100
     if left < 0 then left = 0 end
@@ -262,12 +272,12 @@ local function maskAbsorb(p, mask, amount, key)
     if not m then
         m = { ticks = 0 }
         S.mask[key] = m
-        log(string.format("mask %s absorbing gas: %s filter %.3f", tostring(p:getUsername()), tostring(mask:getFullType()), before))
+        log(string.format("mask %s absorbing gas: %s %s %.3f", tostring(p:getUsername()), tostring(mask:getFullType()), tostring(kind), before))
     end
     m.ticks = m.ticks + 1
     if left <= 0 then
         S.mask[key] = nil
-        log(string.format("mask %s filter depleted (%s)", tostring(p:getUsername()), tostring(mask:getFullType())))
+        log(string.format("mask %s %s depleted (%s)", tostring(p:getUsername()), tostring(kind), tostring(mask:getFullType())))
     end
     if isServer() and (left <= 0 or m.ticks % MASK_SYNC_TICKS == 0) then mask:syncItemFields() end
 end
@@ -299,12 +309,13 @@ local function damageTick(now)
             local pkey = tostring(p:getOnlineID())
             local outside = not B.inExempt(x, y) and B.isOutside(x, y, cx, cy, r)
             local gas = B.opt("Style") == GAS_STYLE
-            local mask = outside and gas and findMask(p) or nil
+            local mask, maskKind = nil, nil
+            if outside and gas then mask, maskKind = findMask(p) end
             if not outside then
                 if S.cough then S.cough[pkey] = nil end
                 if S.mask then S.mask[pkey] = nil end
             elseif mask then
-                maskAbsorb(p, mask, amount, pkey)
+                maskAbsorb(p, mask, maskKind, amount, pkey)
                 if S.cough then S.cough[pkey] = nil end
             else
                 if gas then coughTick(p, now, pkey) end

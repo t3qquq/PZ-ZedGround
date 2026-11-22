@@ -182,7 +182,13 @@ local function gasDrainStrength(playerObj)
 end
 
 function ZedHUDMaskHUD.getFilterDrainStrength(playerObj, mask, cfg)
-	if not mask or not cfg or cfg.isTank then return 0 end
+	if not mask or not cfg then return 0 end
+	-- ZEDGROUND (11-22): 공기호흡기·방호복은 켜져 있는 동안 늘 닳아서 원본은 깜빡이지 않는다.
+	-- 봉쇄 구역 독가스를 막고 있을 때(BlueZoneServer findMask "tank")만 깜빡인다
+	if cfg.isTank then
+		if not (mask:isActivated() and mask:hasTank() and mask:getUsedDelta() > 0) then return 0 end
+		return gasDrainStrength(playerObj)
+	end
 	if not mask:hasFilter() or mask:getUsedDelta() <= 0 then return 0 end
 	local gas = gasDrainStrength(playerObj)
 	if gas > 0 then return gas end
