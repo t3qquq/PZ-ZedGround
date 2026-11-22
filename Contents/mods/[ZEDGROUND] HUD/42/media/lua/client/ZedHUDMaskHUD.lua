@@ -7,6 +7,7 @@
 ]]
 
 require "ISUI/ISPanel"
+require "ISUI/ISUIElement"
 require "ZedHUDConfig"
 
 ZedHUDMaskHUD = ISPanel:derive("ZedHUDMaskHUD")
@@ -370,6 +371,85 @@ end
 
 
 local hudInstance = nil
+
+-- ── ZEDGROUND: 방독면 알림 (원본의 머리 위 말풍선 대신) ─────────────
+-- "필터 소진"·"예비 필터 없음" 등을 방독면 막대 바로 위 가운데에 NOTICE_MS 동안 띄우고 끝에 흐려진다.
+-- 방독면 막대가 안 보이면(경고 모드에서 잔량이 많을 때 등) 핫바 위, 핫바도 없으면 화면 아래쪽 가운데.
+-- 색은 원본 말풍선과 같은 빨강(255, 80, 80). 마우스를 먹지 않는다.
+ZedHUDMaskNotice = ISUIElement:derive("ZedHUDMaskNotice")
+local NOTICE_MS = 3500      -- 원본 HALO_TICKS 200 (60fps 기준 약 3.3초)
+local NOTICE_FADE = 800
+local NOTICE_W, NOTICE_GAP = 400, 4
+local noticeInstance = nil
+
+function ZedHUDMaskNotice:new()
+	local h = getTextManager():getFontHeight(UIFont.Medium) + 4
+	local o = ISUIElement.new(self, 0, 0, NOTICE_W, h)
+	o.text = nil
+	o.until_ = 0
+	o.lastAnchor = nil
+	return o
+end
+
+function ZedHUDMaskNotice:instantiate()
+	ISUIElement.instantiate(self)
+	self.javaObject:setConsumeMouseEvents(false)
+end
+
+function ZedHUDMaskNotice:place()
+	local x, bottom, anchor
+	if hudInstance and hudInstance:getIsVisible() and hudInstance.mask and hudInstance.fadeAlpha > 0 then
+		x = hudInstance:getX() + hudInstance:getWidth() / 2
+		bottom = hudInstance:getY()
+		anchor = "mask bar"
+	else
+		local hotbar = getPlayerHotbar and getPlayerHotbar(0) or nil
+		if hotbar and hotbar:getIsVisible() then
+			x = hotbar:getX() + hotbar:getWidth() / 2
+			bottom = hotbar:getY() - (MASK_H + PAD * 2) - PAD
+			anchor = "hotbar"
+		else
+			x = getCore():getScreenWidth() / 2
+			bottom = math.floor(getCore():getScreenHeight() * 0.75)
+			anchor = "screen"
+		end
+	end
+	self:setX(math.floor(x - self.width / 2))
+	self:setY(math.floor(bottom - self.height - NOTICE_GAP))
+	if anchor ~= self.lastAnchor then
+		self.lastAnchor = anchor
+		ZedHUD.log("mask: notice anchored to " .. anchor)
+	end
+end
+
+function ZedHUDMaskNotice:render()
+	if not self.text then return end
+	local now = getTimestampMs()
+	if now >= self.until_ then
+		self.text = nil
+		return
+	end
+	local playerObj = getSpecificPlayer(0)
+	if not playerObj or playerObj:isDead() then return end
+	self:place()
+	local left = self.until_ - now
+	local a = left < NOTICE_FADE and left / NOTICE_FADE or 1
+	local cx = self.width / 2
+	self:drawTextCentre(self.text, cx + 1, 3, 0, 0, 0, 0.8 * a, UIFont.Medium)
+	self:drawTextCentre(self.text, cx, 2, 1, 80 / 255, 80 / 255, a, UIFont.Medium)
+end
+
+function ZedHUDMaskHUD.showNotice(text)
+	if not noticeInstance then
+		noticeInstance = ZedHUDMaskNotice:new()
+		noticeInstance:initialise()
+		noticeInstance:instantiate()
+		noticeInstance:addToUIManager()
+		noticeInstance:setAlwaysOnTop(false)
+	end
+	noticeInstance.text = text
+	noticeInstance.until_ = getTimestampMs() + NOTICE_MS
+end
 
 local function shouldShowHUD(playerObj)
 	if ZedHUDMask.disabled then return false end

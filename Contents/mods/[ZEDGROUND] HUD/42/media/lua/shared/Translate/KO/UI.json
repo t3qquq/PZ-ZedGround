@@ -16,7 +16,7 @@
   "UI_MFI_FilterEmpty": "필터 소진",
   "UI_MFI_TankEmpty": "산소통 소진",
   "UI_MFI_Opt_NotifyEmpty": "필터가 다 닳으면 알림 표시",
-  "UI_MFI_Opt_NotifyEmpty_TT": "쓰고 있는 방독면의 필터(공기호흡기·방호복은 산소통)가 0 이 되면 캐릭터 머리 위에 알림을 띄웁니다.",
+  "UI_MFI_Opt_NotifyEmpty_TT": "쓰고 있는 방독면의 필터(공기호흡기·방호복은 산소통)가 0 이 되면 방독면 막대 위에 알림을 띄웁니다.",
   "UI_MFI_Opt_ShowDrainBlink": "필터가 닳는 동안 막대 깜빡임",
   "UI_MFI_Opt_ShowDrainBlink_TT": "필터가 닳는 동안 막대의 첫 칸이 깜빡입니다. 빨리 닳을수록 빨리 깜빡입니다.\n필터는 봉쇄 구역 독가스 안, 독성 건물 안, 주변에 시체가 6구 이상 있을 때 닳습니다.\n공기호흡기와 방호복에는 쓰이지 않습니다 (램프가 켜져 있으면 항상 닳음).",
   "UI_ZedHUD_MapMarkerSize": "지도 내 위치 표시 크기"

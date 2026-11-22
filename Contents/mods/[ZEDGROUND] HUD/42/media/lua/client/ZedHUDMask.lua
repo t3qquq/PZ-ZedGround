@@ -21,7 +21,13 @@ ZedHUDMask = {}
 ZedHUDMask.disabled = false
 
 local HOLD_MS = 500
-local HALO_TICKS = 200
+
+-- ZEDGROUND (11-22 t3): 원본은 "필터 소진"·"예비 필터 없음"을 머리 위 말풍선(setHaloNote)으로 띄운다.
+-- 1·3인칭(Viewpoint)에서는 머리 위가 안 보이므로 HUD 알림(ZedHUDMaskHUD.showNotice, 방독면 막대 위)으로 옮긴다.
+local function notify(key, why)
+	ZedHUD.log("mask: notice " .. tostring(key) .. " (" .. tostring(why) .. ")")
+	ZedHUDMaskHUD.showNotice(getText(key))
+end
 
 local MASK_CONFIGS = {
 	{ tagField = "GAS_MASK",            put = "PutFilterOnGasMask",         remove = "RemoveGasMaskFilter",            spareTagField = "GASMASK_FILTER" },
@@ -306,8 +312,7 @@ function ZedHUDMask.performSwap(playerObj)
 
 	local noSpareKey = cfg.isTank and "UI_MFI_NoSpareTank" or "UI_MFI_NoSpareFilter"
 	if not hasSpareFilter(playerObj, cfg) then
-		playerObj:setHaloNote(getText(noSpareKey), 255, 80, 80, HALO_TICKS)
-		ZedHUD.log("mask: swap refused, no spare")
+		notify(noSpareKey, "swap refused, no spare")
 		return
 	end
 
@@ -335,7 +340,7 @@ function ZedHUDMask.performSwap(playerObj)
 				return
 			end
 			if not startCraft(playerObj, mask, cfg, cfg.put, wearBack, onAbort) then
-				playerObj:setHaloNote(getText(noSpareKey), 255, 80, 80, HALO_TICKS)
+				notify(noSpareKey, "put craft could not start")
 				wearBack()
 			end
 		end
@@ -564,7 +569,7 @@ local function checkDrainableEmpty()
 	if id == lastMaskId and lastHadAmount and not hasAmount
 			and ZedHUDMaskOptions and ZedHUDMaskOptions.isNotifyEmpty() then
 		local key = cfg.isTank and "UI_MFI_TankEmpty" or "UI_MFI_FilterEmpty"
-		playerObj:setHaloNote(getText(key), 255, 80, 80, HALO_TICKS)
+		notify(key, "worn " .. (cfg.isTank and "tank" or "filter") .. " ran out")
 	end
 	lastMaskId = id
 	lastHadAmount = hasAmount

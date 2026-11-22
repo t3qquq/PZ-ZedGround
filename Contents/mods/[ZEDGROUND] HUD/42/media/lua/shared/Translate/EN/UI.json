@@ -16,7 +16,7 @@
   "UI_MFI_FilterEmpty": "Filter used up",
   "UI_MFI_TankEmpty": "Oxygen tank empty",
   "UI_MFI_Opt_NotifyEmpty": "Show a message when the filter runs out",
-  "UI_MFI_Opt_NotifyEmpty_TT": "Shows a message above the character when the filter of the worn mask (the oxygen tank for the SCBA and the hazmat suit) reaches 0.",
+  "UI_MFI_Opt_NotifyEmpty_TT": "Shows a message above the mask bar when the filter of the worn mask (the oxygen tank for the SCBA and the hazmat suit) reaches 0.",
   "UI_MFI_Opt_ShowDrainBlink": "Blink the bar while the filter is being used",
   "UI_MFI_Opt_ShowDrainBlink_TT": "While the filter is being used up, the first block of the bar blinks. The faster it drains, the faster it blinks.\nThe filter drains in containment zone gas, inside a toxic building and when there are 6 or more corpses nearby.\nNot used for the SCBA and the hazmat suit (they drain whenever the lamp is on).",
   "UI_ZedHUD_MapMarkerSize": "Map marker size"
