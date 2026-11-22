@@ -1,5 +1,5 @@
 name=[ZEDGROUND] HUD
 id=t3ZedHUD
-description=배그식 상단 나침반·생존자 수·자기장 타이머 HUD
+description=배그식 상단 나침반·생존자 수·봉쇄 구역 타이머 HUD + 방독면 필터 표시(Mask Filter Indicator by movinow) + 지도 내 위치·방향 표시(Compass Direction Indicator by qwerto), 두 제작자 허락을 받아 내장
 versionMin=42.21
-modversion=0.1.0
+modversion=0.2.0

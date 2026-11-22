@@ -1,0 +1,23 @@
+{
+  "UI_MFI_Opt_Position": "HUD position",
+  "UI_MFI_Opt_Position_TT": "Above hotbar: the HUD follows the hotbar, or the dashboard while driving.\nFree: drag it anywhere with the mouse.",
+  "UI_MFI_Opt_Position_Hotbar": "Above hotbar",
+  "UI_MFI_Opt_Position_Free": "Free (drag with mouse)",
+  "UI_MFI_Opt_MaskHud": "Mask HUD visibility",
+  "UI_MFI_Opt_MaskHud_TT": "Always: the filter bar stays visible while a mask is worn.\nAlert: it appears only when the filter drops to a quarter or below.",
+  "UI_MFI_Opt_MaskHud_Always": "Always (while wearing a mask)",
+  "UI_MFI_Opt_MaskHud_Alert": "Alert (only when low)",
+  "UI_MFI_NoSpareFilter": "No spare filter",
+  "UI_MFI_RadialReplaceFilter": "Replace Filter",
+  "UI_MFI_Opt_KeepMaskOn": "Keep the mask on while replacing the filter",
+  "UI_MFI_Opt_KeepMaskOn_TT": "Off: the character takes the mask off, replaces the filter and puts it back on, as when eating. There is no protection for the whole sequence.\nOn: the same motions play but the mask stays on. Protection is lost only while the new filter is being fitted, as in vanilla. The mask stays visible on the face.\nThe SCBA and the hazmat suit are always taken off before the oxygen tank is replaced, whatever this setting (vanilla does not allow it while worn).",
+  "UI_MFI_NoSpareTank": "No spare oxygen tank",
+  "UI_MFI_RadialReplaceTank": "Replace Oxygen Tank",
+  "UI_MFI_FilterEmpty": "Filter used up",
+  "UI_MFI_TankEmpty": "Oxygen tank empty",
+  "UI_MFI_Opt_NotifyEmpty": "Show a message when the filter runs out",
+  "UI_MFI_Opt_NotifyEmpty_TT": "Shows a message above the character when the filter of the worn mask (the oxygen tank for the SCBA and the hazmat suit) reaches 0.",
+  "UI_MFI_Opt_ShowDrainBlink": "Blink the bar while the filter is being used",
+  "UI_MFI_Opt_ShowDrainBlink_TT": "While the filter is being used up, the first block of the bar blinks. The faster it drains, the faster it blinks.\nThe filter drains in containment zone gas, inside a toxic building and when there are 6 or more corpses nearby.\nNot used for the SCBA and the hazmat suit (they drain whenever the lamp is on).",
+  "UI_ZedHUD_MapMarkerSize": "Map marker size"
+}

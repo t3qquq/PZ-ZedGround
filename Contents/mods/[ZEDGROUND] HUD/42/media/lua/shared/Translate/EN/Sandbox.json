@@ -3,5 +3,7 @@
   "Sandbox_ZedHUD_TimerLayout": "Containment zone timer layout",
   "Sandbox_ZedHUD_TimerLayout_tooltip": "Under compass: one line centered under the compass. PUBG style: time and distance-to-next-zone bar above the minimap, plus a center notice when the phase changes.",
   "Sandbox_ZedHUD_TimerLayout_option1": "Under the compass",
-  "Sandbox_ZedHUD_TimerLayout_option2": "PUBG style (above minimap + center notice)"
+  "Sandbox_ZedHUD_TimerLayout_option2": "PUBG style (above minimap + center notice)",
+  "Sandbox_ZedHUD_MapConeRequireCompass": "Map direction cone needs a compass",
+  "Sandbox_ZedHUD_MapConeRequireCompass_tooltip": "On: the direction cone on the map and minimap is only drawn while you carry a compass. Off: it is always drawn. Your position dot is not affected either way."
 }

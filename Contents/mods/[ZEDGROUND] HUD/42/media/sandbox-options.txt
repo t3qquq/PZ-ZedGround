@@ -4,3 +4,8 @@ option ZedHUD.TimerLayout = {
     type = enum, numValues = 2, default = 1,
     page = ZedHUD, translation = ZedHUD_TimerLayout,
 }
+
+option ZedHUD.MapConeRequireCompass = {
+    type = boolean, default = false,
+    page = ZedHUD, translation = ZedHUD_MapConeRequireCompass,
+}

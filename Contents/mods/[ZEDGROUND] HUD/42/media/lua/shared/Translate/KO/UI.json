@@ -1,0 +1,23 @@
+{
+  "UI_MFI_Opt_Position": "방독면 HUD 위치",
+  "UI_MFI_Opt_Position_TT": "핫바 위: HUD 가 핫바를 따라가고, 운전 중에는 계기판 위로 갑니다.\n자유: 마우스로 끌어 원하는 곳에 둡니다.",
+  "UI_MFI_Opt_Position_Hotbar": "핫바 위",
+  "UI_MFI_Opt_Position_Free": "자유 (마우스로 끌기)",
+  "UI_MFI_Opt_MaskHud": "방독면 HUD 표시",
+  "UI_MFI_Opt_MaskHud_TT": "항상: 방독면을 쓰고 있는 동안 필터 막대가 계속 보입니다.\n경고: 필터가 4분의 1 이하로 떨어졌을 때만 나타납니다.",
+  "UI_MFI_Opt_MaskHud_Always": "항상 (방독면 착용 중)",
+  "UI_MFI_Opt_MaskHud_Alert": "경고 (부족할 때만)",
+  "UI_MFI_NoSpareFilter": "예비 필터 없음",
+  "UI_MFI_RadialReplaceFilter": "필터 교체",
+  "UI_MFI_Opt_KeepMaskOn": "필터를 교체하는 동안 방독면을 쓴 채로 유지",
+  "UI_MFI_Opt_KeepMaskOn_TT": "꺼짐: 음식을 먹을 때처럼 방독면을 벗고 필터를 교체한 뒤 다시 씁니다. 그동안에는 보호를 받지 못합니다.\n켜짐: 같은 동작이 나오지만 방독면은 쓴 채로 있습니다. 바닐라처럼 새 필터를 끼우는 동안에만 보호가 끊기고, 방독면은 얼굴에 그대로 보입니다.\n공기호흡기와 방호복은 이 설정과 상관없이 항상 벗은 뒤에 산소통을 교체합니다 (바닐라가 착용 중 교체를 허용하지 않음).",
+  "UI_MFI_NoSpareTank": "예비 산소통 없음",
+  "UI_MFI_RadialReplaceTank": "산소통 교체",
+  "UI_MFI_FilterEmpty": "필터 소진",
+  "UI_MFI_TankEmpty": "산소통 소진",
+  "UI_MFI_Opt_NotifyEmpty": "필터가 다 닳으면 알림 표시",
+  "UI_MFI_Opt_NotifyEmpty_TT": "쓰고 있는 방독면의 필터(공기호흡기·방호복은 산소통)가 0 이 되면 캐릭터 머리 위에 알림을 띄웁니다.",
+  "UI_MFI_Opt_ShowDrainBlink": "필터가 닳는 동안 막대 깜빡임",
+  "UI_MFI_Opt_ShowDrainBlink_TT": "필터가 닳는 동안 막대의 첫 칸이 깜빡입니다. 빨리 닳을수록 빨리 깜빡입니다.\n필터는 봉쇄 구역 독가스 안, 독성 건물 안, 주변에 시체가 6구 이상 있을 때 닳습니다.\n공기호흡기와 방호복에는 쓰이지 않습니다 (램프가 켜져 있으면 항상 닳음).",
+  "UI_ZedHUD_MapMarkerSize": "지도 내 위치 표시 크기"
+}

@@ -1,8 +1,13 @@
 -- ZEDGROUND HUD : client 진입점
 -- 나침반 생성 + 다른 ZEDGROUND 모드 값 조회 (없으면 nil)
+-- 방독면 필터 표시(ZedHUDMask*)와 지도 내 위치 표시(ZedHUDMapMarker)는 각 파일이 스스로 이벤트에 건다
 require "ZedHUDConfig"
+require "ZedHUDOptions"
 require "ZedHUDCompass"
 require "ZedHUDZone"
+require "ZedHUDMask"
+require "ZedHUDMaskHUD"
+require "ZedHUDMapMarker"
 
 ZedHUD.compass = nil
 ZedHUD.zone = nil
