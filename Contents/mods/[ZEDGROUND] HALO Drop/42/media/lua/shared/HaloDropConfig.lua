@@ -39,7 +39,14 @@ HaloDrop.ROUTE_PREGEN = {
     REPORT_MS   = 5000,     -- 진행 로그·방송 주기
 }
 
--- 비행 경로: 마을 기준 A'->A->B->B' (11-18, server/HaloDropServer.lua pickFlight).
+-- 비행 경로 알고리즘 (샌드박스 HaloDrop.RouteMode, 11-22). 번호 -> 이름. 실제 선정 함수는 server/HaloDropServer.lua ROUTE_PICKERS.
+-- 새 방식을 넣을 때: 여기 이름 추가 -> ROUTE_PICKERS 에 같은 번호로 함수 등록 -> sandbox-options.txt numValues +1
+--                     -> Translate EN/KO Sandbox.json 에 Sandbox_HaloDrop_RouteMode_optionN 추가
+HaloDrop.ROUTE_MODES = {
+    [1] = "VillageToVillage",
+}
+
+-- 빌리지 투 빌리지 (RouteMode 1): 마을 기준 A'->A->B->B' (11-18, server/HaloDropServer.lua pickVillageFlight).
 --   A = TOWNS 중 무작위 한 곳의 중점에서 반경 TOWN_RADIUS 안 무작위 점.
 --   B = A 마을과 중점 거리가 MAX_PAIR 두 마을 사이 거리 이하인 다른 마을에서 같은 방식으로 뽑은 점.
 --   A' = A 에서 B 반대쪽으로 |AB| x EXTEND, B' = B 에서 진행 방향으로 |AB| x EXTEND (EXTEND 0.25 = 전체 1.5배, 0.5 = 2배).

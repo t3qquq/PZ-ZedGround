@@ -301,7 +301,7 @@ local function inZone(zone, p)
 end
 
 -- ── 경로 선정 ─────────────────────────────────────────────────────────────────
--- 기본은 마을 기준 A'->A->B->B' (pickFlight, 규칙은 HaloDropConfig HaloDrop.ROUTE).
+-- 샌드박스 RouteMode 로 알고리즘을 고른다 (pickFlight -> ROUTE_PICKERS). 1 = 빌리지 투 빌리지 (pickVillageFlight, 규칙은 HaloDropConfig HaloDrop.ROUTE).
 -- 아래 pickBoxFlight 는 후보 마을이 모자랄 때 쓰는 이전 방식: 비행 박스(WorldX1~Y2) 를 가로지르는 무작위 직선. 박스 가운데 60% 안의 점 P 를 지나는 무작위 각도의
 -- 직선을 박스 테두리로 잘라 A(진입)·B(진출)로 쓴다. 길이가 박스 짧은 변의 절반보다 짧으면 다시 뽑는다.
 local PATH_TRIES = 48   -- AvoidEmptyNW 거부분까지 감안해 16 -> 48
@@ -429,7 +429,7 @@ local function extendTo(box, avoid, x, y, ux, uy, len)
     return lx, ly, false
 end
 
-local function pickFlight(speed)
+local function pickVillageFlight(speed)
     local box = flightBox()
     local cfg = HaloDrop.ROUTE
     local towns = {}
@@ -484,6 +484,22 @@ local function pickFlight(speed)
         ta.name, tb.name, townDist(ta, tb), maxPair and string.format("%.0f", maxPair) or "none", #starts, #ends,
         ax, ay, bx, by, ab, a2x, a2y, cutA and " (cut)" or "", b2x, b2y, cutB and " (cut)" or "", fl.length))
     return fl, box
+end
+
+-- 알고리즘 등록: 번호는 샌드박스 RouteMode 값, 이름은 HaloDrop.ROUTE_MODES 와 맞춘다. 각 함수는 (speed) -> fl, box
+local ROUTE_PICKERS = {
+    [1] = pickVillageFlight,
+}
+
+local function pickFlight(speed)
+    local mode = HaloDrop.opt("RouteMode")
+    local picker = ROUTE_PICKERS[mode]
+    if not picker then
+        log(string.format("flight path: unknown RouteMode %s -> 1 (%s)", tostring(mode), tostring(HaloDrop.ROUTE_MODES[1])))
+        mode, picker = 1, ROUTE_PICKERS[1]
+    end
+    log(string.format("flight path: RouteMode %d (%s)", mode, tostring(HaloDrop.ROUTE_MODES[mode])))
+    return picker(speed)
 end
 
 -- ── 라운드 ────────────────────────────────────────────────────────────────────

@@ -1,5 +1,10 @@
 VERSION = 1,
 
+option HaloDrop.RouteMode = {
+    type = enum, numValues = 1, default = 1,
+    page = HaloDrop, translation = HaloDrop_RouteMode,
+}
+
 option HaloDrop.PlaneSpeed = {
     type = double, min = 5.0, max = 500.0, default = 200.0,
     page = HaloDrop, translation = HaloDrop_PlaneSpeed,
