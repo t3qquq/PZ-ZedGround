@@ -4,3 +4,8 @@ option RoundManager.ViewLock = {
     type = boolean, default = true,
     page = RoundManager, translation = RoundManager_ViewLock,
 }
+
+option RoundManager.AdminIsometric = {
+    type = boolean, default = true,
+    page = RoundManager, translation = RoundManager_AdminIsometric,
+}

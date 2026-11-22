@@ -5,5 +5,6 @@
   "IGUI_RoundManager_View_NoJar": "The view lock module did not load. (Check that you allowed it in the ZombieBuddy approval window)",
   "IGUI_RoundManager_View_NotEnabled": "Could not switch to first/third person.",
   "IGUI_RoundManager_View_HowTo": "Install ZombieBuddy and Viewpoint, allow the approval window shown when joining, then join again.",
-  "IGUI_RoundManager_View_ExitIn": "Leaving to the main menu in %1 s."
+  "IGUI_RoundManager_View_ExitIn": "Leaving to the main menu in %1 s.",
+  "IGUI_RoundManager_View_NoIsometric": "The isometric view is not available on this server."
 }
