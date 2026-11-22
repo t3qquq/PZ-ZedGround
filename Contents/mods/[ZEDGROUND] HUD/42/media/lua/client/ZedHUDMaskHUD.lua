@@ -243,7 +243,6 @@ function ZedHUDMaskHUD:renderMaskSection(rowY)
 	local isTank = self.cfg and self.cfg.isTank or false
 	local hasFilter = ZedHUDMask.hasDrainable(self.mask, self.cfg)
 	local delta = hasFilter and self.mask:getUsedDelta() or 0
-	local filled = math.floor(delta * BLOCKS + 0.000001)
 	local r, g, b = blockColor(delta)
 	local active = (not isTank) or self.mask:isActivated()
 	local fillA = active and 0.9 or 0.35
@@ -253,18 +252,18 @@ function ZedHUDMaskHUD:renderMaskSection(rowY)
 		barAreaW = barAreaW - (LED_W + GAP * 2)
 	end
 	local bw = math.floor((barAreaW + GAP) / BLOCKS) - GAP
-	for i = 0, BLOCKS - 1 do
-		local bx = barX + i * (bw + GAP)
-		if i < filled then
-			local a = (i == filled - 1) and blinkAlpha(self.drainStrength, fillA) or fillA
-			self:drawRect(bx, rowY, bw, BLOCK_H, a, r, g, b)
-		else
-			self:drawRectBorder(bx, rowY, bw, BLOCK_H, 0.5, 0.45, 0.45, 0.45)
+	-- ZEDGROUND (11-22 t3): 윗줄은 10칸 대신 긴 막대 한 줄. 폭은 원래 10칸 전체 폭 그대로라 아랫줄 예비 필터 칸과 끝이 맞는다.
+	-- 색 규칙(초록 > 50% / 노랑 > 25% / 빨강)은 원본 그대로. 깜빡임은 원본처럼 채움 끝 한 칸(bw) 폭만 깜빡인다.
+	local trackW = BLOCKS * (bw + GAP) - GAP
+	self:drawRectBorder(barX, rowY, trackW, BLOCK_H, 0.5, 0.45, 0.45, 0.45)
+	if hasFilter and delta > 0 then
+		local fillW = math.max(2, math.floor(trackW * delta + 0.5))
+		if fillW > trackW then fillW = trackW end
+		local tipW = math.min(bw, fillW)
+		if fillW > tipW then
+			self:drawRect(barX, rowY, fillW - tipW, BLOCK_H, fillA, r, g, b)
 		end
-	end
-	if hasFilter and filled == 0 and delta > 0 then
-		local sliverW = math.max(2, math.floor(bw * delta * BLOCKS + 0.5))
-		self:drawRect(barX, rowY, sliverW, BLOCK_H, blinkAlpha(self.drainStrength, fillA), r, g, b)
+		self:drawRect(barX + fillW - tipW, rowY, tipW, BLOCK_H, blinkAlpha(self.drainStrength, fillA), r, g, b)
 	end
 	if isTank then
 		local lx = barX + BLOCKS * (bw + GAP) - GAP + GAP * 2
