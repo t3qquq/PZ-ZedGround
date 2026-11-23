@@ -127,15 +127,16 @@ HaloDrop.FF = {
 -- 낙하산: v = CanopySpeed(6.9 m/s = 무입력 25km/h) 대비 비율, h = CanopySteer(W 72km/h x k) 대비 비율.
 -- 낙하산 높이별 하강 가속 (HaloDropJumper). 발밑 바닥 기준 높이(m). LOW 아래 x1(배그 25km/h), HIGH 이상 x MAX, 사이는 직선.
 -- 뛰는 고도를 배그의 2배(3000m)로 올려서 일찍 펴면 낙하산 구간이 5분 가까이 됐다 (11-23). x4 / 300~1500m 면 2400m 전개 시 약 2분 20초
-HaloDrop.CANOPY_ALT_SPEED = { LOW = 300, HIGH = 1500, MAX = 4.0 }
+-- CAP: 낙하산 하강 상한(m/초). 높이 배수 x W·Shift 가 자유낙하(약 42~50)를 넘지 않게 = 108km/h
+HaloDrop.CANOPY_ALT_SPEED = { LOW = 300, HIGH = 1500, MAX = 4.0, CAP = 30.0 }
 
 HaloDrop.CP = {
     neutral = { v = 1.00, h = 0.00 },   -- 무입력: 25 km/h, 수평 0
-    glide   = { v = 1.00, h = 1.00 },   -- W: 25 / 72 km/h
-    dive    = { v = 2.16, h = 0.80 },   -- 달리기 키(Shift): 54 / 57 km/h. W 유무와 무관
+    glide   = { v = 1.80, h = 1.00 },   -- W: 45 / 72 km/h. 배그 실측은 하강 25 그대로였지만 W 로 빨리 내려가고 싶다는 t3 요청 (11-23)
+    dive    = { v = 3.20, h = 0.80 },   -- 달리기 키(Shift): 80 / 57 km/h. W 유무와 무관 (배그 54, 11-23 t3 요청으로 올림)
     brake   = { v = 0.32, h = 0.00 },   -- S: 8 km/h, 거의 정지
     slow    = { v = 0.44, h = 0.87 },   -- Ctrl: 11 / 62 km/h 장거리 활공. W 유무와 무관
-    turn    = { v = 2.00, h = 0.75 },   -- W + A / D: 50 / 약 55 km/h, 선회 CanopyTurnRateFwd
+    turn    = { v = 2.20, h = 0.75 },   -- W + A / D: 55 / 약 55 km/h, 선회 CanopyTurnRateFwd (W 보다 빠르게)
     spin    = { v = 1.00, h = 0.40 },   -- A / D 단독: 하강은 그대로 25~27 km/h, 선회 CanopyTurnRate
 }
 
@@ -155,9 +156,10 @@ HaloDrop.POSE = {
     RATE_X        = 6.0,   -- 좌우 기울기가 목표로 수렴하는 속도(1/초). 6 이면 약 0.17초에 63%
     RATE_Y        = 3.0,   -- 상하(감속·활공·다이브)가 목표로 수렴하는 속도(1/초). 3 이면 약 0.33초에 63%
     CANOPY_SLOW_Y = -0.4,  -- 낙하산 Ctrl(느린 하강)의 Y 목표. -1 이 S 플레어 자세
-    -- 낙하산 그네 (11-23, claude/PUBG_캐노피_규칙_20261123.md 4절). 블렌드 X +-1 = 롤 70도, Y +1 = 몸 뒤로 25도
-    CANOPY_TURN_X     = 0.43,  -- A / D 단독 선회: 약 30도 (배그 30~45도)
-    CANOPY_TURN_FWD_X = 0.65,  -- W + A / D 선회: 약 45도. 0.79(55도)는 스프링이 넘칠 때 70도 끝에 닿아 몸이 수평으로 누웠다 (11-23 런)
+    -- 낙하산 그네 (11-23, claude/PUBG_캐노피_규칙_20261123.md 4절). 블렌드 X +-1 = 롤 35도, Y +1 = 몸 뒤로 25도
+    -- 클립 끝(X +-1)이 롤 35도 (11-23 저녁 t3: 좌우 들썩임이 커서 70 -> 35 로 절반)
+    CANOPY_TURN_X     = 0.43,  -- A / D 단독 선회: 약 15도
+    CANOPY_TURN_FWD_X = 0.65,  -- W + A / D 선회: 약 23도. 스프링이 넘쳐도 끝(35도) 안쪽
     CANOPY_FWD_Y      = 0.6,   -- W: 몸이 뒤로 약 15도. 떼면 앞으로 넘어갔다 돌아온다 (W 반복 = 앞뒤 흔들림)
     CANOPY_RUN_Y      = 0.8,   -- Shift: 몸이 뒤로 약 20도 (캐노피를 앞으로 숙인 빠른 하강)
     CANOPY_FLARE_Y    = -1.0,  -- S 플레어: 몸 앞으로 25도, 양손 허리
@@ -317,7 +319,7 @@ HaloDrop.FIXED = {
     CanopySteer      = 7.0,   -- 낙하산 W 수평(타일/초) = 배그 72km/h x k(0.35). FreefallSteer 를 올리면 같은 비율로 올릴 것
     -- 관성 계수(1/초): v += (목표 - v) * Accel * dt (명세서 8.1절)
     FreefallAccel    = 1.0,   -- 자유낙하: 4~5초에 정속 (Shift 174 -> 234 km/h 약 4초)
-    CanopyAccel      = 0.3,   -- 낙하산 하강: Shift 25 -> 54 km/h 약 10초, W+A/D 27 -> 52 약 5초
+    CanopyAccel      = 0.6,   -- 낙하산 하강 수렴 빠르기. 0.3(배그 Shift 약 10초)은 W·Shift 를 눌러도 굼떠서 올림 (11-23)
     CanopyAccelH     = 1.0,   -- 낙하산 수평: 배그 실측 없음(임의). 하강과 같은 0.3 이면 W 를 눌러도 3초 넘게 굼뜨다
     ChuteDecel       = 4.0,   -- 전개 직후 감속: 150 -> 약 27 km/h 가 1초 (배그 150 -> 18 약 1초, 232 -> 28 약 2초). 끝 기준은 CHUTE_DECEL_END
     -- 회전(도/초)

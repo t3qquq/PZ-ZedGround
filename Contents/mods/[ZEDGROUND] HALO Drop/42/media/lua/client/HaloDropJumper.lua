@@ -1165,6 +1165,7 @@ local function onPlayerUpdate(p)
         local m = math.sqrt(th * th + ts * ts)
         if m > hBase then th, ts = th * hBase / m, ts * hBase / m end
     end
+    if canopy and tv > HaloDrop.CANOPY_ALT_SPEED.CAP then tv = HaloDrop.CANOPY_ALT_SPEED.CAP end   -- 낙하산이 자유낙하보다 빠르지 않게
     J.vz = approach(J.vz, tv, accelV, dt)
     J.vh = approach(J.vh, th, accelH, dt)
     J.vs = approach(J.vs, ts, accelH, dt)
