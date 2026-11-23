@@ -1102,12 +1102,18 @@ local function onPlayerUpdate(p)
     -- 자세: 2D 블렌드 목표 (HaloDropPose 머리말). 값은 HaloDropPose 가 HaloDrop.POSE 속도로 따라간다
     --   자유낙하 Y: S -1(감속 X자) / 무입력 0 / W 1(활공) ~ 2(카메라가 아래를 볼수록 다이브) / Shift 2(다이브)
     --   자유낙하 X: A / D 옆 이동 -1 / +1 (몸 롤)
-    --   낙하산  X: A / D 선회 -1 / +1 (기울기), Y: S -1(플레어) / Ctrl SLOW_Y / 그 외 0
+    --   낙하산  X: A / D 선회 (단독 CANOPY_TURN_X, W 와 함께 CANOPY_TURN_FWD_X = 더 깊은 뱅크)
+    --          Y: S 플레어 / Shift 몸 뒤로 크게 / Ctrl SLOW_Y / W 몸 뒤로 / 그 외 0. 값은 HaloDropPose 스프링이 따라간다
     if not J.released then
         if canopy then
+            local PC = HaloDrop.POSE
+            local tx = turn * ((fwd and not back) and PC.CANOPY_TURN_FWD_X or PC.CANOPY_TURN_X)
             local ty = 0
-            if back then ty = -1 elseif keyDown(KEY_SLOW) then ty = HaloDrop.POSE.CANOPY_SLOW_Y end
-            HaloDropPose.setTarget(p, turn, ty)
+            if back then ty = PC.CANOPY_FLARE_Y
+            elseif run then ty = PC.CANOPY_RUN_Y
+            elseif keyDown(KEY_SLOW) then ty = PC.CANOPY_SLOW_Y
+            elseif fwd then ty = PC.CANOPY_FWD_Y end
+            HaloDropPose.setTarget(p, tx, ty)
         else
             HaloDropPose.set(p, "freefall")
             local ty = 0
