@@ -65,19 +65,27 @@ end
 
 -- 요소 좌표 (x,y) 를 중심으로, 화면상 진행 방향 단위벡터 (ux,uy) 로 기수를 돌려 한 변 size 로 그린다.
 -- 텍스처는 기수가 위(-y). drawTextureAllPoint(DrawTexture 12인자)는 요소 오프셋을 안 더하므로 절대좌표로 넘긴다
-local function drawPlaneIcon(el, x, y, ux, uy, size)
-    local tex = planeIcon()
-    if not tex then return end
+-- 11-23: 흰 아이콘이 흰 경로선 위에서 안 보여 같은 모양을 검게, 더 크게 먼저 깐다 (K.ICON_HALO / ICON_HALO_A)
+local function drawPlaneQuad(el, tex, cx, cy, ux, uy, size, r, g, b, a)
     local h = size / 2
     local fx, fy = ux * h, uy * h          -- 기수 쪽
     local rx, ry = -uy * h, ux * h         -- 오른쪽 날개 쪽
-    local cx, cy = el:getAbsoluteX() + x, el:getAbsoluteY() + y
     el:drawTextureAllPoint(tex,
         cx + fx - rx, cy + fy - ry,        -- 왼쪽 위
         cx + fx + rx, cy + fy + ry,        -- 오른쪽 위
         cx - fx + rx, cy - fy + ry,        -- 오른쪽 아래
         cx - fx - rx, cy - fy - ry,        -- 왼쪽 아래
-        1, 1, 1, 1)
+        r, g, b, a)
+end
+
+local function drawPlaneIcon(el, x, y, ux, uy, size)
+    local tex = planeIcon()
+    if not tex then return end
+    local cx, cy = el:getAbsoluteX() + x, el:getAbsoluteY() + y
+    if K.ICON_HALO and K.ICON_HALO > 1 then
+        drawPlaneQuad(el, tex, cx, cy, ux, uy, size * K.ICON_HALO, 0, 0, 0, K.ICON_HALO_A or 0.75)
+    end
+    drawPlaneQuad(el, tex, cx, cy, ux, uy, size, 1, 1, 1, 1)
     local now = getTimestampMs()
     if el.iconSize ~= math.floor(size + 0.5) and (not el.iconLogAt or now >= el.iconLogAt) then
         el.iconLogAt = now + 1000

@@ -25,9 +25,11 @@ module HaloDrop
         }
     }
 
-    /* 자유낙하 바람 소리. 뛰어내린 순간부터 낙하산이 펴질 때까지 루프. 저역 굉음 + 고역 쉿소리 + 옷 펄럭임(약 22Hz 진폭 변조)을
-       합성한 12초 무이음 루프. 재생·정지·음량(하강 속도 비례, HaloDrop.WIND)은 HaloDropJumper.lua 가 자기 캐릭터 emitter 로 한다.
-       전체 크기는 음원 자체에 -6dB 를 구워 넣었다 (RMS 약 -16.5dBFS). clip volume 은 1.0 고정, 크기를 바꿀 땐 wav 를 고친다. */
+    /* 자유낙하 바람 소리. 뛰어내린 순간부터 낙하산이 펴질 때까지 루프. 12초 무이음 루프.
+       11-23 2차: 1차 음원(저역 굉음 + 고역 쉿소리 + 옷 펄럭임 22Hz 진폭 변조)이 "찢어지는" 소리로만 들려서,
+       공진 대역이 260~960Hz 사이를 오가는 "휘이잉" 층 + 저역 굉음을 주로 깔고 1차 음원은 아래에 약하게 섞었다.
+       재생·정지·음량(하강 속도 비례, HaloDrop.WIND)은 HaloDropJumper.lua 가 자기 캐릭터 emitter 로 한다.
+       전체 크기는 음원 자체에 구웠다 (-23 LUFS, 1차보다 약 6.7dB 작음). clip volume 은 1.0 고정, 크기를 바꿀 땐 wav 를 고친다. */
     sound halodrop_freefall_wind
     {
         category = Object,
