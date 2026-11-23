@@ -3,7 +3,8 @@
   https://steamcommunity.com/sharedfiles/filedetails/?id=3832759095
   제작자 허락을 받아 ZEDGROUND 서버용으로 고쳐 내장했다 (11-22). 이 파일을 다른 곳에 재배포하지 말 것.
   원본과 다른 점: 전역·파일 이름(MaskFilterIndicator* -> ZedHUDMask*), 모드 옵션은 ZedHUDOptions.lua 로 합침,
-  봉쇄 구역 독가스로 필터가 닳을 때도 막대가 깜빡인다, 로그 추가, 크기 1.5배(SCALE, 11-23 t3: 원본 크기는 너무 작음).
+  봉쇄 구역 독가스로 필터가 닳을 때도 막대가 깜빡인다, 로그 추가, 크기 1.5배(SCALE, 11-23 t3: 원본 크기는 너무 작음),
+  윗줄은 긴 막대 한 줄이고 깜빡이는 채움 끝 폭은 막대의 2%(TIP_FRAC, 11-23 t3: 원본 한 칸 10%는 듬성듬성).
   그 밖의 동작·수치는 원본 그대로.
 ]]
 
@@ -29,6 +30,8 @@ local REFRESH_TICKS = 30
 local LOW_DELTA = 0.25
 local DASH_TOP_INSET = 9
 local LED_W = S(14)
+local TIP_FRAC = 0.02    -- 깜빡이는 채움 끝 폭 = 막대 폭의 2%
+local TIP_MIN_W = S(2)   -- 막대가 좁아도(공기호흡기 LED 자리) 최소 이 px 은 깜빡인다
 
 
 function ZedHUDMaskHUD:onRightMouseUp(x, y)
@@ -267,13 +270,14 @@ function ZedHUDMaskHUD:renderMaskSection(rowY)
 	end
 	local bw = math.floor((barAreaW + GAP) / BLOCKS) - GAP
 	-- ZEDGROUND (11-22 t3): 윗줄은 10칸 대신 긴 막대 한 줄. 폭은 원래 10칸 전체 폭 그대로라 아랫줄 예비 필터 칸과 끝이 맞는다.
-	-- 색 규칙(초록 > 50% / 노랑 > 25% / 빨강)은 원본 그대로. 깜빡임은 원본처럼 채움 끝 한 칸(bw) 폭만 깜빡인다.
+	-- 색 규칙(초록 > 50% / 노랑 > 25% / 빨강)은 원본 그대로.
+	-- 깜빡임 폭 (11-23 t3): 원본 한 칸(bw, 전체의 약 10%)은 너무 듬성듬성해서 막대 폭의 TIP_FRAC(2%)만 채움 끝에서 깜빡인다
 	local trackW = BLOCKS * (bw + GAP) - GAP
 	self:drawRectBorder(barX, rowY, trackW, BLOCK_H, 0.5, 0.45, 0.45, 0.45)
 	if hasFilter and delta > 0 then
 		local fillW = math.max(2, math.floor(trackW * delta + 0.5))
 		if fillW > trackW then fillW = trackW end
-		local tipW = math.min(bw, fillW)
+		local tipW = math.min(math.max(TIP_MIN_W, math.floor(trackW * TIP_FRAC + 0.5)), fillW)
 		if fillW > tipW then
 			self:drawRect(barX, rowY, fillW - tipW, BLOCK_H, fillA, r, g, b)
 		end
