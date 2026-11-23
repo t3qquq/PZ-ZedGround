@@ -189,6 +189,47 @@ local function planeSoundStop(p)
     J.planeSnd = nil
 end
 
+-- 자유낙하 바람 소리 (11-23): 뛰어내린 순간부터 낙하산이 펴질 때까지. 음량은 하강 속도를 따라 커진다
+--   (vz 0 -> FreefallSpeed 에서 HaloDrop.WIND.VOL_MIN -> VOL_MAX). 음원 halodrop_freefall_wind.wav 는 12초 무이음 루프
+local function windSoundStart(p)
+    if J.windSnd then return end
+    local ok, h = pcall(function() return p:getEmitter():playSoundImpl("halodrop_freefall_wind", nil) end)
+    if ok and h and h ~= 0 then
+        J.windSnd = h
+        J.windVol = nil
+        log("wind: start")
+    else
+        log("wind: start FAILED " .. (ok and "handle=0" or ("err=" .. tostring(h))))
+    end
+end
+
+local function windSoundStop(p, why)
+    if not J.windSnd then return end
+    pcall(function() p:getEmitter():stopSound(J.windSnd) end)
+    J.windSnd = nil
+    J.windVol = nil
+    log("wind: stop (" .. tostring(why) .. ")")
+end
+
+local function windSoundTick(p)
+    if not J.windSnd then return end
+    local W = HaloDrop.WIND
+    local s = (J.vz or 0) / HaloDrop.opt("FreefallSpeed")
+    if s < 0 then s = 0 elseif s > 1 then s = 1 end
+    local vol = W.VOL_MIN + (W.VOL_MAX - W.VOL_MIN) * s
+    if J.windVol and math.abs(vol - J.windVol) < 0.02 then return end
+    local ok, err = pcall(function() p:getEmitter():setVolume(J.windSnd, vol) end)
+    if not ok then
+        log("wind: setVolume FAILED err=" .. tostring(err))
+        J.windVol = vol            -- 실패해도 매 틱 재시도해 로그를 쏟지 않게
+        return
+    end
+    if not J.windVol or math.floor(vol * 10) ~= math.floor(J.windVol * 10) then
+        log(string.format("wind: volume %.2f (vz=%.1f)", vol, J.vz or 0))
+    end
+    J.windVol = vol
+end
+
 -- ── 낙하산 착용·해제 (클라) ───────────────────────────────────────────────────
 local function findChute(p)
     local inv = p:getInventory()
@@ -741,6 +782,7 @@ local function finish(p)
     J.state = nil
     HaloDropPose.set(p, nil)
     planeSoundStop(p)
+    windSoundStop(p, "finish")
     p:setBlockMovement(false)
     poseLock(p, false)
     HaloDropSky.close("finish")
@@ -811,6 +853,7 @@ local function jump(p, why)
     J.waitLogged = nil
     J.blockedSince = nil
     planeSoundStop(p)
+    windSoundStart(p)
     HaloDropSky.close("freefall")
     descentZoomStart(p)
     log(string.format("jump (%s) at (%.1f,%.1f) alt=%.0fm heading=%.0f waited=%dms ground=%s plane=%s",
@@ -843,6 +886,7 @@ local function openChute(p, reason)
     J.deploying = true
     J.openedAt = getTimestampMs()
     HaloDropPose.set(p, "canopy")
+    windSoundStop(p, "chute open")
     pcall(function() p:getEmitter():playSoundImpl("halodrop_chute", nil) end)
     if not J.chuteSent then
         J.chuteSent = true
@@ -1144,6 +1188,7 @@ local function onPlayerUpdate(p)
     end
     face(p, fhx, fhy)
     descentZoomTick()
+    windSoundTick(p)
 
     if not J.released and J.alt - J.vz * dt > carryAltM() then
         -- 붙잡기: 가상 고도를 줄이고 실제 z 는 visualZ 로 따라 내린다 (DESCENT_Z 꺼져 있으면 CarryZ 고정)

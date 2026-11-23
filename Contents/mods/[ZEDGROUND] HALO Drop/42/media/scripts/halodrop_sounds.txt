@@ -25,6 +25,20 @@ module HaloDrop
         }
     }
 
+    /* 자유낙하 바람 소리. 뛰어내린 순간부터 낙하산이 펴질 때까지 루프. 저역 굉음 + 고역 쉿소리 + 옷 펄럭임(약 22Hz 진폭 변조)을
+       합성한 12초 무이음 루프. 재생·정지·음량(하강 속도 비례, HaloDrop.WIND)은 HaloDropJumper.lua 가 자기 캐릭터 emitter 로 한다.
+       전체 크기는 음원 자체에 -6dB 를 구워 넣었다 (RMS 약 -16.5dBFS). clip volume 은 1.0 고정, 크기를 바꿀 땐 wav 를 고친다. */
+    sound halodrop_freefall_wind
+    {
+        category = Object,
+        loop = true,
+        clip
+        {
+            file = media/sound/halodrop_freefall_wind.wav,
+            volume = 1.0,
+        }
+    }
+
     /* 경로 준비(출발 전) 대기 음악. ZEDGROUND 메인 테마. 재생·정지는 HaloDropClient.lua 가
        UI emitter 로 하고 set3D(false) 로 방향을 끈다 (아래 is3D = false 는 엔진이 쓰지 않는다). Prep 이 3분 44초보다 길어지면 처음부터 반복한다.
        음량은 스크립트 volume 이 아니라 음원 자체에 -17dB 를 구워 넣었다 (약 -30 LUFS, 11-19 -11dB 에서 반으로 더 줄임). */

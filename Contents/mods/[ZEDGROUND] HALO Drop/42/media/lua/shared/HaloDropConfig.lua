@@ -238,6 +238,13 @@ HaloDrop.SKY = {
     TINT_NIGHT = 0.35,   -- 밤(낮 밝기 0)일 때 타일 밝기 배율
 }
 
+-- 자유낙하 바람 소리 (HaloDropJumper windSound*). 음량은 하강 속도 vz 를 따라 VOL_MIN -> VOL_MAX (FreefallSpeed 에서 최대)
+HaloDrop.WIND = {
+    VOL_MIN = 0.4,   -- 뛰어내린 직후(vz 0). 최대 대비 비율이다 (전체 크기가 아니다)
+    VOL_MAX = 1.0,   -- 최대 하강 속도. 전체 크기는 음원에 구워 넣는다 (11-23: -6dB, RMS 약 -16.5dBFS = 엔진음보다 약 4.5dB 큼).
+                     -- 크기를 바꿀 땐 이 값이 아니라 halodrop_freefall_wind.wav 자체의 음량을 고칠 것
+}
+
 function HaloDrop.log(msg)
     print("[HaloDrop] " .. tostring(msg))
 end
