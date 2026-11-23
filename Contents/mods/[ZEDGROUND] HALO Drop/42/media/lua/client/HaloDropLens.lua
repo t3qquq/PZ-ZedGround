@@ -13,7 +13,9 @@
 -- 볼록 정도 c (0 ~ 1, 11-23 2차): 높을 때는 화면을 둥글게 휘어(파니니, 볼록·어안 쪽) 높이감을 주고, 지면에 가까울수록
 --   그리고 다이브할수록 파니니를 빼서 넓은 시야각의 가장자리 늘어남(오목 쪽)으로 넘어가 돌진감을 준다.
 --   c = 발밑 지면 기준 고도로 PANINI_ALT_LOW(0) ~ PANINI_ALT_HIGH(1) 보간 x (1 - DIVE_CUT x 다이브 비율). RATE_CONVEX 로 따라간다.
---   파니니 = PANINI x k x c. 시야각·당김은 k 만 따른다.
+--   파니니 = PANINI x k x c. 당김은 k 만 따른다.
+--   시야각 비율 = (FOV + CONCAVE_FOV x (1 - c)) x k, 최대 1 (11-23 3차: 오목 쪽이 정지 화면에서 약해 보여서, 볼록이 빠지는 만큼
+--   시야각을 상한 FOV_CAP 쪽으로 더 연다. 넓을수록 가장자리 늘어남(오목 쪽)이 커진다).
 -- HaloDrop.LensState = { fov, cap, panini, pull, at }: 매 틱 새 표로 통째로 바꾼다(자바가 다른 스레드에서 읽는다).
 -- 스피드라인(HaloDropSpeedLines): 투명도 = ALPHA_MAX x k x (HIGH_SHARE + (1 - HIGH_SHARE) x (1 - c)). 오목 쪽일수록 진하다.
 
@@ -60,8 +62,8 @@ function HaloDropLens.start()
     S.c = 1
     S.bucket = nil
     S.cBucket = nil
-    log(string.format("lens: start (cap=%d fov=%.2f panini=%.2f pull=%.2f, convex above %dm agl, flat below %dm, dive cut %.2f, viewpoint fov now=%s)",
-        L.FOV_CAP, L.FOV, L.PANINI, L.PULL, L.PANINI_ALT_HIGH, L.PANINI_ALT_LOW, L.DIVE_CUT, viewFov()))
+    log(string.format("lens: start (cap=%d fov=%.2f concave fov +%.2f panini=%.2f pull=%.2f, convex above %dm agl, flat below %dm, dive cut %.2f, viewpoint fov now=%s)",
+        L.FOV_CAP, L.FOV, L.CONCAVE_FOV or 0, L.PANINI, L.PULL, L.PANINI_ALT_HIGH, L.PANINI_ALT_LOW, L.DIVE_CUT, viewFov()))
     HaloDropSpeedLines.start()
 end
 
@@ -97,7 +99,8 @@ function HaloDropLens.tick(state, vz, dt, now, agl)
     local cTarget = altC * (1 - L.DIVE_CUT * diveK)
     if freefall then S.c = approach(S.c, cTarget, L.RATE_CONVEX, dt) end
     local pan = L.PANINI * S.k * S.c
-    HaloDrop.LensState = { fov = L.FOV * S.k, cap = L.FOV_CAP, panini = pan, pull = L.PULL * S.k, at = now }
+    local fovShare = clamp01((L.FOV + (L.CONCAVE_FOV or 0) * (1 - S.c)) * S.k)
+    HaloDrop.LensState = { fov = fovShare, cap = L.FOV_CAP, panini = pan, pull = L.PULL * S.k, at = now }
     local SLc = HaloDrop.SPEEDLINES
     local lineA = 0
     if SLc and SLc.ON then
@@ -110,7 +113,7 @@ function HaloDropLens.tick(state, vz, dt, now, agl)
         S.bucket = bucket
         S.cBucket = cBucket
         log(string.format("lens: k=%.2f c=%.2f state=%s vz=%.1f agl=%s -> fov share %.2f panini %.2f pull %.2f lines %.2f (viewpoint fov now=%s)",
-            S.k, S.c, tostring(state), vz, agl and string.format("%.0f", agl) or "nil", L.FOV * S.k, pan, L.PULL * S.k, lineA, viewFov()))
+            S.k, S.c, tostring(state), vz, agl and string.format("%.0f", agl) or "nil", fovShare, pan, L.PULL * S.k, lineA, viewFov()))
     end
 end
 
