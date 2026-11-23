@@ -6,6 +6,50 @@ if isServer() then return end
 
 require "HaloDropConfig"
 
+-- 글자 윗줄 y. 기본 BASE_Y. ZEDGROUND HUD 모드가 있으면 나침반·나침반 아래 봉쇄 구역 타이머 아래로 내린다
+-- (11-23 t3: 자유낙하 문구가 "N차 봉쇄 구역 축소까지" 타이머와 겹침). 타이머가 배그식(미니맵 위)이면 나침반만 피한다.
+-- HUD 모드를 require 하지 않고 전역(ZedHUD.compass / ZedHUD.zone)이 있을 때만 읽는다
+local BASE_Y = 60
+local BELOW_GAP = 6
+local _topLog = nil
+
+local function elementBottom(el)
+    if not el or not el:isVisible() then return nil end
+    return el:getY() + el:getHeight()
+end
+
+local function textTop()
+    local y = BASE_Y
+    local Z = ZedHUD
+    if not Z then return y end
+    local why = "default"
+    local ok, err = pcall(function()
+        local b = elementBottom(Z.compass)
+        if b and b + BELOW_GAP > y then
+            y = b + BELOW_GAP
+            why = "below compass"
+        end
+        if Z.zone and Z.timerLayout and Z.LAYOUT_COMPASS and Z.timerLayout() == Z.LAYOUT_COMPASS
+                and Z.sourceZoneState and Z.sourceZoneState() then
+            b = elementBottom(Z.zone)
+            if b and b + BELOW_GAP > y then
+                y = b + BELOW_GAP
+                why = "below zone timer"
+            end
+        end
+    end)
+    if not ok then
+        why = "zedhud read failed: " .. tostring(err)
+        y = BASE_Y
+    end
+    local key = why .. ":" .. tostring(y)
+    if key ~= _topLog then
+        _topLog = key
+        HaloDrop.log(string.format("hud: text top y=%d (%s)", y, why))
+    end
+    return y
+end
+
 local function keyName()
     return getKeyName(getCore():getKey("Interact"))
 end
@@ -38,7 +82,7 @@ local PREP_BAR_W, PREP_BAR_H = 360, 8
 
 local function drawPrep(P)
     local x = getCore():getScreenWidth() / 2
-    local y = 60
+    local y = textTop()
     local tm = getTextManager()
     local text = getText("IGUI_HaloDrop_RoutePrep")
     tm:DrawStringCentre(UIFont.Large, x + 2, y + 2, text, 0, 0, 0, 0.8)
@@ -70,7 +114,7 @@ local function onPostUIDraw()
     local text = lineFor(J)
     if not text then return end
     local x = getCore():getScreenWidth() / 2
-    local y = 60
+    local y = textTop()
     local tm = getTextManager()
     tm:DrawStringCentre(UIFont.Large, x + 2, y + 2, text, 0, 0, 0, 0.8)
     tm:DrawStringCentre(UIFont.Large, x, y, text, 1, 1, 1, 1)
