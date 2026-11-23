@@ -3,7 +3,8 @@
   https://steamcommunity.com/sharedfiles/filedetails/?id=3832759095
   제작자 허락을 받아 ZEDGROUND 서버용으로 고쳐 내장했다 (11-22). 이 파일을 다른 곳에 재배포하지 말 것.
   원본과 다른 점: 전역·파일 이름(MaskFilterIndicator* -> ZedHUDMask*), 모드 옵션은 ZedHUDOptions.lua 로 합침,
-  봉쇄 구역 독가스로 필터가 닳을 때도 막대가 깜빡인다, 로그 추가. 그 밖의 동작·수치는 원본 그대로.
+  봉쇄 구역 독가스로 필터가 닳을 때도 막대가 깜빡인다, 로그 추가, 크기 1.5배(SCALE, 11-23 t3: 원본 크기는 너무 작음).
+  그 밖의 동작·수치는 원본 그대로.
 ]]
 
 require "ISUI/ISPanel"
@@ -12,18 +13,22 @@ require "ZedHUDConfig"
 
 ZedHUDMaskHUD = ISPanel:derive("ZedHUDMaskHUD")
 
+-- ZEDGROUND (11-23 t3): 원본 픽셀 크기 그대로는 너무 작아서 전체를 SCALE 배로 키운다. 원본에도 크기 옵션은 없다
+local SCALE = 1.5
+local function S(v) return math.floor(v * SCALE + 0.5) end
+
 local BLOCKS = 10
-local BLOCK_H = 12
-local PIP_H = 5
-local GAP = 2
-local PAD = 4
-local ICON = 24
+local BLOCK_H = S(12)
+local PIP_H = S(5)
+local GAP = S(2)
+local PAD = S(4)
+local ICON = S(24)
 local MASK_H = BLOCK_H + GAP + PIP_H
-local DEFAULT_W = 240
+local DEFAULT_W = S(240)
 local REFRESH_TICKS = 30
 local LOW_DELTA = 0.25
 local DASH_TOP_INSET = 9
-local LED_W = 14
+local LED_W = S(14)
 
 
 function ZedHUDMaskHUD:onRightMouseUp(x, y)
@@ -98,6 +103,7 @@ function ZedHUDMaskHUD:new()
 	o.drainStrength = 0
 	o.ledRect = nil
 	o._ledDown = false
+	ZedHUD.log(string.format("mask: hud scale %.2f (bar %dpx, free width %dpx)", SCALE, BLOCK_H, DEFAULT_W))
 	return o
 end
 
@@ -277,12 +283,12 @@ function ZedHUDMaskHUD:renderMaskSection(rowY)
 	-- 원본은 소진 순간 머리 위 말풍선을 잠깐 띄웠다. 모드 옵션 "필터가 다 닳으면 알림 표시"로 끌 수 있다
 	if hasFilter and delta <= 0 and ZedHUDMaskOptions.isNotifyEmpty() then
 		local text = getText(isTank and "UI_MFI_TankEmpty" or "UI_MFI_FilterEmpty")
-		local fh = getTextManager():getFontHeight(UIFont.Small)
+		local fh = getTextManager():getFontHeight(UIFont.Medium)
 		local tx = barX + math.floor(trackW / 2)
 		local ty = rowY + math.floor((BLOCK_H - fh) / 2)
 		local a = self.fadeAlpha
-		self:drawTextCentre(text, tx + 1, ty + 1, 0, 0, 0, 0.8 * a, UIFont.Small)
-		self:drawTextCentre(text, tx, ty, 1, 80 / 255, 80 / 255, a, UIFont.Small)
+		self:drawTextCentre(text, tx + 1, ty + 1, 0, 0, 0, 0.8 * a, UIFont.Medium)
+		self:drawTextCentre(text, tx, ty, 1, 80 / 255, 80 / 255, a, UIFont.Medium)
 	end
 	if isTank then
 		local lx = barX + BLOCKS * (bw + GAP) - GAP + GAP * 2
@@ -363,7 +369,7 @@ function ZedHUDMaskHUD:render()
 		if dashMode then
 			local sw = (hotbar and hotbar.slotWidth) or 60
 			local pad = (hotbar and hotbar.slotPad) or 4
-			self.panelW = math.floor(sw * 3 + pad * 2)
+			self.panelW = math.floor((sw * 3 + pad * 2) * SCALE)
 			self:setWidth(self.panelW)
 			self:setHeight(h)
 			self:setX(math.floor(dash:getX() + (dash:getWidth() - self.panelW) / 2))
@@ -371,7 +377,7 @@ function ZedHUDMaskHUD:render()
 		elseif hotbarReady then
 			local sw = hotbar.slotWidth or 60
 			local pad = hotbar.slotPad or 4
-			self.panelW = math.floor(sw * 3 + pad * 2)
+			self.panelW = math.floor((sw * 3 + pad * 2) * SCALE)
 			self:setWidth(self.panelW)
 			self:setHeight(h)
 			self:setX(math.floor(hotbar:getX() + (hotbar:getWidth() - self.panelW) / 2))
