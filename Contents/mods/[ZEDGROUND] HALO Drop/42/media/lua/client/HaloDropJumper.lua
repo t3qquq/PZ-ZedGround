@@ -1192,7 +1192,7 @@ local function onPlayerUpdate(p)
     face(p, fhx, fhy)
     descentZoomTick()
     windSoundTick(p)
-    HaloDropLens.tick(J.state, J.vz or 0, dt, now)
+    HaloDropLens.tick(J.state, J.vz or 0, dt, now, J.alt - groundAlt(p))
 
     if not J.released and J.alt - J.vz * dt > carryAltM() then
         -- 붙잡기: 가상 고도를 줄이고 실제 z 는 visualZ 로 따라 내린다 (DESCENT_Z 꺼져 있으면 CarryZ 고정)

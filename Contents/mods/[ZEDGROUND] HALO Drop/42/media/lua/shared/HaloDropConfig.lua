@@ -258,9 +258,25 @@ HaloDrop.LENS = {
     PANINI     = 1.0,   -- 화면을 둥글게 휘는 세기 (Viewpoint 파니니 투영, 설정 범위 0.1~1 의 최대. 플레이어가 더 세게 켜 뒀으면 그 값)
     PULL       = 0.8,   -- 시야각을 넓혀 작아진 캐릭터 크기를 카메라를 당겨 되돌리는 비율 (1 = 원래 크기 그대로, 3인칭만)
     K_NEUTRAL  = 0.8,   -- 무입력 자유낙하 속도(150 km/h)에서의 세기. 다이브 최고 속도에서 1
+    -- 11-23 2차: 높을 때는 볼록(파니니) 높이감, 낮을수록·다이브할수록 파니니를 빼서 오목 쪽(가장자리 늘어남) 돌진감
+    PANINI_ALT_HIGH = 1800,  -- 발밑 지면 기준 고도(m). 이 위에서는 파니니 그대로 (볼록)
+    PANINI_ALT_LOW  = 700,   -- 이 아래에서는 파니니 0 (넓은 시야각 그대로 = 가장자리가 늘어나는 오목 쪽). 자동 전개는 360m
+    DIVE_CUT   = 0.6,   -- Shift 다이브 최고 속도에서 볼록 정도를 이 비율만큼 깎는다
+    RATE_CONVEX = 0.8,  -- 볼록 정도가 목표로 가는 속도 (초당)
     RATE_IN    = 1.5,   -- 세기가 올라가는 속도 (초당)
     RATE_OUT   = 1.0,   -- 자유낙하 중 세기가 내려가는 속도 (다이브를 풀 때)
     RATE_CHUTE = 3.0,   -- 낙하산을 편 뒤 0 까지 줄이는 속도 (약 0.3초)
+}
+
+-- 자유낙하 스피드라인 오버레이 (HaloDropSpeedLines.lua). 화면 가장자리에서 가운데로 모이는 흰 선, 가운데는 비어 있다.
+-- 투명도 = ALPHA_MAX x 광각 세기 k x (HIGH_SHARE + (1 - HIGH_SHARE) x (1 - 볼록 정도 c)): 높을 땐 옅고 낮을수록·다이브할수록 진하다.
+HaloDrop.SPEEDLINES = {
+    ON         = true,
+    TEX        = "media/textures/HaloDrop/speedline_%d.png",
+    FRAMES     = 4,     -- 텍스처 장 수
+    FPS        = 12,    -- 초당 장 바꾸기 횟수
+    ALPHA_MAX  = 0.45,  -- 가장 진할 때 투명도
+    HIGH_SHARE = 0.3,   -- 높을 때(볼록) 최대 대비 비율
 }
 
 function HaloDrop.log(msg)
