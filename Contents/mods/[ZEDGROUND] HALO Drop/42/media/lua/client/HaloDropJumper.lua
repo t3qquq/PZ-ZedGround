@@ -767,6 +767,22 @@ local function poseLock(p, on)
             p:setSneaking(false)
             log("pose lock: sneak turned off")
         end
+        -- 앉기: 바닥·가구에 앉은 채 탑승하면 앉은 상태(PlayerSitOnGroundState)가 강하 자세 노드보다 우선해 착지까지
+        -- 앉은 자세로 떨어졌다 (11-23 런). 앉기 플래그를 끄고 바닐라 일어나기 변수(forceGetUp)를 세운다
+        local sitG, sitF = false, false
+        pcall(function() sitG = p:isSitOnGround() end)
+        pcall(function() sitF = p:isSittingOnFurniture() end)
+        if sitG or sitF then
+            local ok, err = pcall(function()
+                p:setSitOnGround(false)
+                p:setSittingOnFurniture(false)
+                p:setVariable("forceGetUp", true)
+            end)
+            local st = "?"
+            pcall(function() st = tostring(p:getCurrentState()) end)
+            log(string.format("pose lock: stood up (was sitOnGround=%s onFurniture=%s) ok=%s state=%s%s",
+                tostring(sitG), tostring(sitF), tostring(ok), st, ok and "" or (" err=" .. tostring(err))))
+        end
     elseif _poseLock then
         _poseLock = false
         local okAim = pcall(function() p:setIgnoreAimingInput(false) end)
