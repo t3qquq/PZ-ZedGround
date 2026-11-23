@@ -221,26 +221,18 @@ HaloDrop.DESCENT_ZOOM = {
 -- ── 하늘 뷰 (HaloDropSky.lua) 상수. 지도 줌은 샌드박스 SkyZoom. ─────────────────────
 HaloDrop.SKY = {
     LEAD       = 90,     -- 지도 중심을 진행 방향으로 당기는 거리(타일). 기체 앞쪽이 더 보이게
-    SCENE_FRAC = 0.42,   -- 기체 씬 한 변 = 화면 짧은 변 x 이 값
-    SCENE_DY   = 0.0,    -- 기체 씬 세로 위치 보정(화면 높이 비율, + 는 아래)
-    SCENE_ZOOM = 3,      -- ISUI3DScene setZoom (1~20). 보이는 폭 = 1366/(e^(0.2*zoom)*88) 유닛: 3 -> 8.5
-    SCENE_SCALE = 0.12,  -- 기체 객체 배율(getObjectScale). C-17 53 m x 0.12 = 6.4 유닛. 런 4: 배율 없이는 동체 조각만 보였다
-    TILT       = 30,     -- 기체를 내려다보는 각도(도). 인게임 아이소 카메라와 같은 값 (TileGeometryUtils viewRotation (30,315,0))
     -- 11-17: 지도는 M 키 월드맵과 같은 벡터 지도를 북쪽이 위인 탑뷰(□)로 보여준다 (배그 지도처럼). false 면 이전 아이소(◇)
     TOP_DOWN   = true,
-    TILT_TOP   = 90,     -- 탑뷰일 때 기체를 내려다보는 각도(도). 90 = 바로 위에서
-    YAW_BASE_ISO = 315,  -- 기수 기본 식 view yaw = YAW_BASE + 차량 yaw. 아이소는 인게임 카메라 yaw 315
-    YAW_BASE_TOP = 0,    -- 탑뷰는 아이소에서 45도 돌린 값 (315 + 45). 기수가 경로 화살표와 안 맞으면 [ ] 키로 맞춰 YAW0 에 적는다
     ZOOM_MIN   = 11.0,   -- 휠 확대·축소 범위 (UIWorldMap zoom). 시작값은 FIXED.SkyZoom. 11-19: 8 -> 11 (지도 전체가 화면에 맞는 줌이 약 11.3, 그보다 멀리 빼는 건 의미 없음)
     ZOOM_MAX   = 20.0,
     ZOOM_STEP  = 0.5,    -- 휠 한 칸당 zoom 변화
-    -- 11-18: 기체 모형이 지도 확대·축소를 따라간다 (씬 한 변 = 기본 x 2^(zoom - SkyZoom)). 너무 작아지거나 커지지 않게 자른다
-    PLANE_MIN  = 0.25,   -- 씬 한 변 최소 = 기본 크기 x 이 값 (zoom 을 2 이상 줄여도 더 작아지지 않음)
-    PLANE_MAX  = 3.0,    -- 씬 한 변 최대 = 화면 긴 변 x 이 값
+    -- 11-23: 수송기는 3D 모형(C-17) 대신 배그식 2D 아이콘(media/textures/HaloDrop/plane_icon.png, 기수가 위)으로 그린다.
+    --   지도 확대·축소를 따라간다: 한 변 = 기본 x 2^(zoom - SkyZoom). 너무 작아지거나 커지지 않게 자른다
+    ICON_TEX   = "media/textures/HaloDrop/plane_icon.png",
+    ICON_FRAC  = 0.05,   -- SkyZoom 일 때 아이콘 한 변 = 화면 짧은 변 x 이 값 (1440 기준 72px)
+    ICON_MIN   = 0.5,    -- 한 변 최소 = 기본 크기 x 이 값
+    ICON_MAX   = 0.25,   -- 한 변 최대 = 화면 짧은 변 x 이 값
     ROUTE_W    = 3,      -- 경로선 두께(px)
-    YAW0       = 0,      -- 기수 방향 미세 보정(도). 기본 식은 view yaw = 315 + 차량 yaw(HaloDropFlight.yaw) -- 월드에서 setAngles 한
-                         -- 차량을 아이소 카메라로 본 것과 같은 모습(UI3DScene.calcMatrices :2655 rotateXYZ 뒤에 객체 변환).
-                         -- 런 5 까지는 YAW0 45 + 화면투영각이라 기수가 진행 방향과 안 맞았다. [ ] 키로 ±5 조정, 로그 sky tune:
     COVER_RATE = 2.0,    -- 구름 덮개 알파가 목표로 수렴하는 속도(1/초)
     TILE_LOADS_PER_FRAME = 2,  -- 타일 텍스처를 프레임당 몇 장까지 새로 읽을지 (히치 방지)
     TINT_NIGHT = 0.35,   -- 밤(낮 밝기 0)일 때 타일 밝기 배율
