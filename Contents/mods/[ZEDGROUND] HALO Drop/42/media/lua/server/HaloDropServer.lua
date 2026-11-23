@@ -635,7 +635,15 @@ local function closeRound(reason)
     if not R then return end
     for k, m in pairs(R.members) do
         local p = findPlayer(k)
-        if p then chuteTake(p, "round close") end
+        if p then
+            -- 아직 공중(뛰어내렸고 착지 보고 전)이면 낙하산을 회수하지 않는다. 일찍 펴면 착지까지 경로 끝 + 2분보다
+            -- 오래 걸려(3000m 를 25km/h 로 약 7분) 하강 중에 낙하산이 사라졌다 (11-23 런). 회수는 착지 보고(Landed)·사망이 한다
+            if not m.landed and not m.aboard then
+                log("round close: " .. tostring(m.name) .. " still in the air -> chute kept until landing")
+            else
+                chuteTake(p, "round close")
+            end
+        end
     end
     jumpPlanesRemoveAll("round close")
     log("round " .. tostring(R.id) .. " closed (" .. tostring(reason) .. ")")
