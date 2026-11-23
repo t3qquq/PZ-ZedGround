@@ -903,6 +903,7 @@ local function openChute(p, reason)
     J.openAt = nil
     J.fwdToward = nil
     J.deploying = true
+    J.canopyMulBand = nil   -- 높이별 가속 로그를 전개 때 한 번 남기게
     J.openedAt = getTimestampMs()
     HaloDropPose.set(p, "canopy")
     windSoundStop(p, "chute open")
@@ -1012,6 +1013,21 @@ local function onPlayerUpdate(p)
     if not J.released then viewCheck("descent") end   -- 강하 중 시점 전환 감지 (바뀔 때만 로그)
     local canopy = J.state == "CANOPY"
     local vBase = canopy and HaloDrop.opt("CanopySpeed") or HaloDrop.opt("FreefallSpeed")
+    -- 낙하산 높이별 가속 (11-23 t3: 일찍 펴면 2400m 를 25km/h 로 약 5분 내려왔다). 발밑 바닥 기준 LOW 아래는 배그 그대로,
+    -- HIGH 이상은 MAX 배, 그 사이는 직선. 모든 낙하산 하강 목표(무입력·W·선회·Shift·S·Ctrl)에 같이 곱한다
+    if canopy then
+        local A = HaloDrop.CANOPY_ALT_SPEED
+        local agl = J.alt - groundAlt(p)
+        local f = (agl - A.LOW) / math.max(1, A.HIGH - A.LOW)
+        if f < 0 then f = 0 elseif f > 1 then f = 1 end
+        local mul = 1 + (A.MAX - 1) * f
+        local band = math.floor(mul * 2 + 0.5)
+        if band ~= J.canopyMulBand then
+            J.canopyMulBand = band
+            log(string.format("canopy speed x%.2f at above-ground=%.0fm (x1 below %dm, x%.1f above %dm)", mul, agl, A.LOW, A.MAX, A.HIGH))
+        end
+        vBase = vBase * mul
+    end
     local hBase = canopy and HaloDrop.opt("CanopySteer") or HaloDrop.opt("FreefallSteer")
     local tbl = canopy and HaloDrop.CP or HaloDrop.FF
 

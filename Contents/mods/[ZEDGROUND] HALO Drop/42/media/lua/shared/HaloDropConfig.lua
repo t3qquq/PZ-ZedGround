@@ -125,6 +125,10 @@ HaloDrop.FF = {
     strafe    = { v = 0.59, h = 0.65 },   -- A / D 단독: 138 km/h, 옆으로 약 80 km/h (h 는 heading 의 좌우 수직 방향)
 }
 -- 낙하산: v = CanopySpeed(6.9 m/s = 무입력 25km/h) 대비 비율, h = CanopySteer(W 72km/h x k) 대비 비율.
+-- 낙하산 높이별 하강 가속 (HaloDropJumper). 발밑 바닥 기준 높이(m). LOW 아래 x1(배그 25km/h), HIGH 이상 x MAX, 사이는 직선.
+-- 뛰는 고도를 배그의 2배(3000m)로 올려서 일찍 펴면 낙하산 구간이 5분 가까이 됐다 (11-23). x4 / 300~1500m 면 2400m 전개 시 약 2분 20초
+HaloDrop.CANOPY_ALT_SPEED = { LOW = 300, HIGH = 1500, MAX = 4.0 }
+
 HaloDrop.CP = {
     neutral = { v = 1.00, h = 0.00 },   -- 무입력: 25 km/h, 수평 0
     glide   = { v = 1.00, h = 1.00 },   -- W: 25 / 72 km/h
@@ -153,7 +157,7 @@ HaloDrop.POSE = {
     CANOPY_SLOW_Y = -0.4,  -- 낙하산 Ctrl(느린 하강)의 Y 목표. -1 이 S 플레어 자세
     -- 낙하산 그네 (11-23, claude/PUBG_캐노피_규칙_20261123.md 4절). 블렌드 X +-1 = 롤 70도, Y +1 = 몸 뒤로 25도
     CANOPY_TURN_X     = 0.43,  -- A / D 단독 선회: 약 30도 (배그 30~45도)
-    CANOPY_TURN_FWD_X = 0.79,  -- W + A / D 선회: 약 55도 (배그 60~80도, 하강도 두 배)
+    CANOPY_TURN_FWD_X = 0.65,  -- W + A / D 선회: 약 45도. 0.79(55도)는 스프링이 넘칠 때 70도 끝에 닿아 몸이 수평으로 누웠다 (11-23 런)
     CANOPY_FWD_Y      = 0.6,   -- W: 몸이 뒤로 약 15도. 떼면 앞으로 넘어갔다 돌아온다 (W 반복 = 앞뒤 흔들림)
     CANOPY_RUN_Y      = 0.8,   -- Shift: 몸이 뒤로 약 20도 (캐노피를 앞으로 숙인 빠른 하강)
     CANOPY_FLARE_Y    = -1.0,  -- S 플레어: 몸 앞으로 25도, 양손 허리
