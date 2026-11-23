@@ -41,6 +41,7 @@ if isServer() then return end
 require "HaloDropConfig"
 require "HaloDropFlight"
 require "HaloDropSky"
+require "HaloDropLens"
 
 HaloDropJumper = {}
 
@@ -783,6 +784,7 @@ local function finish(p)
     HaloDropPose.set(p, nil)
     planeSoundStop(p)
     windSoundStop(p, "finish")
+    HaloDropLens.stop("finish")
     p:setBlockMovement(false)
     poseLock(p, false)
     HaloDropSky.close("finish")
@@ -854,6 +856,7 @@ local function jump(p, why)
     J.blockedSince = nil
     planeSoundStop(p)
     windSoundStart(p)
+    HaloDropLens.start()
     HaloDropSky.close("freefall")
     descentZoomStart(p)
     log(string.format("jump (%s) at (%.1f,%.1f) alt=%.0fm heading=%.0f waited=%dms ground=%s plane=%s",
@@ -1189,6 +1192,7 @@ local function onPlayerUpdate(p)
     face(p, fhx, fhy)
     descentZoomTick()
     windSoundTick(p)
+    HaloDropLens.tick(J.state, J.vz or 0, dt, now)
 
     if not J.released and J.alt - J.vz * dt > carryAltM() then
         -- 붙잡기: 가상 고도를 줄이고 실제 z 는 visualZ 로 따라 내린다 (DESCENT_Z 꺼져 있으면 CarryZ 고정)

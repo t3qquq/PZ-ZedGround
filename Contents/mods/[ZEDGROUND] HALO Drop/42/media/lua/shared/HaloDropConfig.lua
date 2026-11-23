@@ -245,6 +245,21 @@ HaloDrop.WIND = {
                      -- 크기를 바꿀 땐 이 값이 아니라 halodrop_freefall_wind.wav 자체의 음량을 고칠 것
 }
 
+-- 자유낙하 광각(어안) 연출 (HaloDropLens.lua + HaloDropClient.jar Lens). Viewpoint 1·3인칭에서만 보인다.
+-- Viewpoint 설정창(Delete) 값은 건드리지 않고, 뛰어내린 뒤부터 낙하산을 펼 때까지만 화면에 덧씌운다.
+-- 세기 k(0~1)는 하강 속도를 따라간다. 아래 FOV / PANINI / PULL 은 k = 1(Shift 다이브 최고 속도)일 때의 값이다.
+HaloDrop.LENS = {
+    ON         = true,
+    FOV_CAP    = 130,   -- 시야각을 넓혀 갈 끝점(도). Viewpoint 상한은 140
+    FOV        = 0.5,   -- 플레이어 시야각에서 FOV_CAP 까지 가는 비율. 3인칭 기본 60 -> 95, 1인칭 90 -> 110
+    PANINI     = 0.8,   -- 화면을 둥글게 휘는 세기 (Viewpoint 의 파니니 투영. 플레이어가 더 세게 켜 뒀으면 그 값을 쓴다)
+    PULL       = 0.6,   -- 시야각을 넓혀 작아진 캐릭터 크기를 카메라를 당겨 되돌리는 비율 (1 = 원래 크기 그대로, 3인칭만)
+    K_NEUTRAL  = 0.6,   -- 무입력 자유낙하 속도(150 km/h)에서의 세기. 다이브 최고 속도에서 1
+    RATE_IN    = 1.5,   -- 세기가 올라가는 속도 (초당)
+    RATE_OUT   = 1.0,   -- 자유낙하 중 세기가 내려가는 속도 (다이브를 풀 때)
+    RATE_CHUTE = 3.0,   -- 낙하산을 편 뒤 0 까지 줄이는 속도 (약 0.3초)
+}
+
 function HaloDrop.log(msg)
     print("[HaloDrop] " .. tostring(msg))
 end
