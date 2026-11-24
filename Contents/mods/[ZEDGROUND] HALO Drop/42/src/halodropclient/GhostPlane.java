@@ -43,6 +43,9 @@ import static org.lwjgl.opengl.GL33.*;
  * Overlap (0.6.1): for ~3 frames both planes were drawn until the server's removal arrived. PatchVpVehicleHide skips
  *   Viewpoint's capture of a C-17 within HIDE_REACH tiles of the ghost start for HIDE_MS after it, read straight from
  *   the Lua table on the game thread, so the real one is gone the frame the ghost is published.
+ * Warm-up (0.6.2, run 11-24 night): the first draw loaded the mesh/texture (5.6 MB), compiled the shaders and
+ *   built mipmaps in the handoff frame -> the game froze ~67 ms (4 repeated frames) exactly when the plane appeared.
+ *   Now the GL objects are made WARM_FRAMES Viewpoint frames after joining, long before any jump.
  * Lua -> Java: no bridge. HaloDrop.Ghost is read from LuaManager.env by reflection, like Lens and Blue Zone.
  *   Lua replaces the table as a whole; a new `id` starts a new flight.
  * Public for the same reason as SkyLight: ZombieBuddy inlines the advice into Viewpoint's class.
@@ -62,6 +65,7 @@ public final class GhostPlane {
     static final String PLANE_SUFFIX = "HaloDropC17";
     static final double HIDE_REACH = 40.0;      // tiles: real C-17 this close to the ghost start is not drawn by Viewpoint
     static final long HIDE_MS = 15000L;         // the server removes the real one well before this
+    static final int WARM_FRAMES = 120;         // Viewpoint frames after joining before the GL objects are made (warm-up)
 
     static final String VS =
             "#version 330 core\n" +
@@ -110,6 +114,7 @@ public final class GhostPlane {
     private int uView, uProj, uModel, uTex, uLight, uLook, uHaze, uHazeMax;
     private boolean broken;
     private int errors;
+    private int warmFrames;
 
     // Viewpoint internals
     private boolean vpResolved;
@@ -458,6 +463,27 @@ public final class GhostPlane {
                 + " look=" + uLook + " haze=" + uHaze + " hazeMax=" + uHazeMax + " glError=0x" + Integer.toHexString(err));
     }
 
+    /** makes the GL objects ahead of the first flight so the handoff frame does no loading (state saved and put back) */
+    private void warmUp() {
+        long t = System.nanoTime();
+        int oldVao = glGetInteger(GL_VERTEX_ARRAY_BINDING), oldBuf = glGetInteger(GL_ARRAY_BUFFER_BINDING),
+                oldActive = glGetInteger(GL_ACTIVE_TEXTURE);
+        glActiveTexture(GL_TEXTURE0 + 7);
+        int oldTex = glGetInteger(GL_TEXTURE_BINDING_2D);
+        try {
+            initGl();
+            log("warm-up done in " + ((System.nanoTime() - t) / 1_000_000) + " ms (before any flight)");
+        } catch (Throwable e) {
+            fail("warm-up", e);
+        } finally {
+            glBindVertexArray(oldVao);
+            glBindBuffer(GL_ARRAY_BUFFER, oldBuf);
+            glActiveTexture(GL_TEXTURE0 + 7);
+            glBindTexture(GL_TEXTURE_2D, oldTex);
+            glActiveTexture(oldActive);
+        }
+    }
+
     /** camera position in render space from a view matrix (column-major or row-major, picked by the zero row); [3] = 1 if column-major */
     static double[] cameraFromView(float[] m) {
         boolean colMajor = Math.abs(m[3]) + Math.abs(m[7]) + Math.abs(m[11]) < 1e-3f;
@@ -492,7 +518,10 @@ public final class GhostPlane {
     private void draw(Object frame) {
         if (broken) return;
         try { readState(); } catch (Throwable t) { fail("state", t); return; }
-        if (!flying) return;
+        if (!flying) {
+            if (program == 0 && ++warmFrames == WARM_FRAMES) warmUp();
+            return;
+        }
         if (!resolveVp(frame)) return;
         try {
             long now = System.currentTimeMillis();
