@@ -46,6 +46,8 @@ import static org.lwjgl.opengl.GL33.*;
  * Warm-up (0.6.2, run 11-24 night): the first draw loaded the mesh/texture (5.6 MB), compiled the shaders and
  *   built mipmaps in the handoff frame -> the game froze ~67 ms (4 repeated frames) exactly when the plane appeared.
  *   Now the GL objects are made WARM_FRAMES Viewpoint frames after joining, long before any jump.
+ * 11-25 cleanup (0.6.4): the placement probe (0.6.3) is gone - Viewpoint's VehicleCapture.place was not the vehicle's
+ *   draw transform, and the handoff looked seamless in the 11-25 run. hide() caches the script-name check per vehicle.
  * Lua -> Java: no bridge. HaloDrop.Ghost is read from LuaManager.env by reflection, like Lens and Blue Zone.
  *   Lua replaces the table as a whole; a new `id` starts a new flight.
  * Public for the same reason as SkyLight: ZombieBuddy inlines the advice into Viewpoint's class.
@@ -136,6 +138,8 @@ public final class GhostPlane {
     private boolean hideResolved, hideBroken;
     private Method mVehScript, mVehX, mVehY;
     private int hiddenFrames;
+    // per vehicle object: is it a Halo Drop C-17? (Viewpoint asks for every drawn vehicle every frame)
+    private final java.util.Map<Object, Boolean> planeCache = java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
     private double hiddenLoggedId = Double.NaN;
     private long t0;
 
@@ -237,7 +241,6 @@ public final class GhostPlane {
         t0 = (long) num(st, "t0", System.currentTimeMillis());
         hasPose = readPose(st);
         flying = true;
-        log("handoff compare (measurement): " + PlaceProbe.last());
         frames = 0; farFrames = 0; firstDrawLogged = false;
         nextStat = System.currentTimeMillis() + STAT_MS;
         log("ghost start id=" + (long) id + " at (" + f1(x0) + "," + f1(y0) + ") z=" + f1(z) + " dir=(" + f2(dx) + "," + f2(dy) + ")"
@@ -286,8 +289,13 @@ public final class GhostPlane {
                 mVehY = veh.getMethod("getY");
                 hideResolved = true;
             }
-            Object name = mVehScript.invoke(v);
-            if (!(name instanceof String) || !((String) name).endsWith(PLANE_SUFFIX)) return false;
+            Boolean isPlane = planeCache.get(v);
+            if (isPlane == null) {
+                Object name = mVehScript.invoke(v);
+                isPlane = name instanceof String && ((String) name).endsWith(PLANE_SUFFIX);
+                planeCache.put(v, isPlane);
+            }
+            if (!isPlane) return false;
             resolveLua();
             Object st = ghostTable();
             if (st == null) return false;

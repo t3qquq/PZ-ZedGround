@@ -455,70 +455,6 @@ local function readCamera()
     return hdg, down, true
 end
 
--- ── 자세 진단 (11-19 런: Shift 다이브 중 마우스를 좌우로 돌리면 팔이 기괴하게 꺾인다) ──────────
--- 1초 tick 로그로는 원인이 안 잡혀서(twist=0/0, 클립 Glide-Dive 팔 차이 18도) 자유낙하 중 다이브 쪽(블렌드 Y > DIAG_Y)
--- 이거나 Shift 를 누른 동안 DIAG_MS 간격으로 남긴다. 후보: 상하 조준 각도(updateVerticalAimAngle), 어깨 비틀기,
--- 머리 돌리기, 다른 레이어에 섞여 들어오는 바닐라·Viewpoint 트랙. 점프마다 DIAG_MAX 줄까지.
-local DIAG_MS, DIAG_Y, DIAG_MAX = 50, 1.05, 1500
-local function trackText(p)
-    local parts = {}
-    for layer = 0, 3 do
-        for i = 0, 15 do   -- 자유낙하 2D 블렌드만 클립 10개다 (0~7 만 보면 GlideR·Dive 가 빠진다, 11-19 런 로그)
-            local okN, name = pcall(function() return p:dbgGetAnimTrackName(layer, i) end)
-            if not okN or name == nil or name == "" then break end
-            local okW, w = pcall(function() return p:dbgGetAnimTrackWeight(layer, i) end)
-            if okW and w and w >= 0.02 then
-                parts[#parts + 1] = string.format("L%d:%s=%.2f", layer, tostring(name), w)
-            end
-        end
-    end
-    return table.concat(parts, " ")
-end
-
-local function poseDiag(p, now, diving)
-    local bx, by, btx, bty = HaloDropPose.blend()
-    if not by then return end
-    if not diving and by <= DIAG_Y then return end
-    if J.diagNext and now < J.diagNext then return end
-    J.diagNext = now + DIAG_MS
-    J.diagCount = (J.diagCount or 0) + 1
-    if J.diagCount > DIAG_MAX then
-        if J.diagCount == DIAG_MAX + 1 then log("posediag: limit " .. DIAG_MAX .. " lines reached for this jump") end
-        return
-    end
-    local body = "?"
-    pcall(function()
-        body = string.format("anim=%.0f twist=%.1f/%.1f shoulder=%.1f vAim=%.1f/%.1f aiming=%s allowTwist=%s twisting=%s headLook=%s/%.2f/%.2f",
-            math.deg(p:getAnimAngleRadians()), p:getTwist(), p:getTargetTwist(), p:getShoulderTwist(),
-            p:getCurrentVerticalAimAngle(), p:getTargetVerticalAimAngle(), tostring(p:isAiming()),
-            tostring(p:allowsTwist()), tostring(p:isTwisting()), tostring(p:isHeadLookAround()),
-            p:getHeadLookHorizontal(), p:getHeadLookVertical())
-    end)
-    log(string.format("posediag t=%d dive=%s blend=(%.2f,%.2f)->(%.2f,%.2f) hdg=%.0f face=%.0f camT=%s eyeYaw=%s eyePitch=%s %s | %s",
-        now, tostring(diving), bx, by, btx, bty, J.heading or 0, J.faceHdg or J.heading or 0,
-        J.camTarget and string.format("%.0f", J.camTarget) or "nil",
-        _cam.ok and string.format("%.1f", _cam.yaw or 0) or "nil",
-        _cam.ok and string.format("%.1f", _cam.pitch or 0) or "nil",
-        body, trackText(p)))
-end
-
--- tick 로그용 카메라 요약
-local function camText(p)
-    local look = "?"
-    pcall(function() look = string.format("%.0f", math.deg(p:getLookAngleRadians())) end)
-    -- 11-18 런(d27c7e2): Shift 다이브 중 카메라를 돌리면 몸이 꺾여 보였다. 상체 비틀기/머리 돌리기가 남는지 확인용
-    local tw = "?"
-    pcall(function()
-        tw = string.format("twist=%.0f/%.0f anim=%.0f headLook=%s/%.2f", p:getTwist(), p:getTargetTwist(),
-            math.deg(p:getAnimAngleRadians()), tostring(p:isHeadLookAround()), p:getHeadLookHorizontal())
-    end)
-    if not _cam.ok then return "none look=" .. look .. " " .. tw end
-    return string.format("mode=%s d=(%.2f,%.2f,%.2f) eyeYaw=%s eyePitch=%s look=%s target=%s %s",
-        tostring(_cam.mode), _cam.dx, _cam.dy, _cam.dz, tostring(_cam.yaw), tostring(_cam.pitch), look,
-        J.camTarget and string.format("%.0f", J.camTarget) or "nil", tw)
-end
-
-
 -- ── 공중 칸 채우기 (런 4 검정 화면 대응, 추정 기반 실험) ─────────────────────────
 -- B42 청크는 minLevel~maxLevel 사이 층만 갖는다(IsoChunk.setSquare :3100 이 새 z 가 오면 범위를 늘림,
 -- 들판 청크는 0층뿐). 조명/시야 네이티브는 청크마다 그 범위만 갱신(LightingJNI.updateChunk :604)하므로
@@ -830,7 +766,6 @@ local function startJump(p, reason)
     local x, y = HaloDropFlight.pos(C.fl, now - C.t0)
     J.state = "JUMPING"
     J.x, J.y = x, y
-    J.diagCount, J.diagNext = 0, nil
     J.jump = { at = now, groundAt = nil, planeSeen = false, reason = reason }
     airFillReset()
     J.view = nil
@@ -949,9 +884,9 @@ local function onPlayerUpdate(p)
     poseLock(p, true)
     local carry = carryZ()
 
-    -- 1초 주기 상태 로그 (실시간 검증용)
+    -- 상태 로그 (실시간 검증용, 11-25 부터 5초 주기. 카메라 요약 줄·자세 진단 줄은 튜닝이 끝나 삭제)
     if not J.nextLog or now >= J.nextLog then
-        J.nextLog = now + 1000
+        J.nextLog = now + 5000
         local h = -1
         pcall(function() h = p:getHeightAboveFloor() end)
         local ai, act, anim = "?", "?", "?"
@@ -961,7 +896,6 @@ local function onPlayerUpdate(p)
         log(string.format("tick state=%s alt=%.0fm z=%.2f pos=(%.1f,%.1f) vz=%.1f vh=%.1f vs=%.1f hdg=%.0f pitch=%.2f fall=%.2f h=%.2f released=%s falling=%s ai=%s action=%s anim=%s",
             tostring(J.state), J.alt or -1, p:getZ(), p:getX(), p:getY(), J.vz or 0, J.vh or 0, J.vs or 0, J.heading or 0, J.pitch or 0,
             p:getLastFallSpeed(), h, tostring(J.released), tostring(p:isFalling()), ai, act, anim))
-        if J.state == "FREEFALL" or J.state == "CANOPY" then log("tick cam=" .. camText(p)) end
     end
 
     if J.state == "ABOARD" then
@@ -1149,7 +1083,6 @@ local function onPlayerUpdate(p)
                 log("pose: horizontal resumed -> input pose")
             end
             HaloDropPose.setTarget(p, tx, ty)
-            poseDiag(p, now, diving)
         end
     end
 

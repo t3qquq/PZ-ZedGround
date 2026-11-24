@@ -46,8 +46,6 @@ local _blend = {}      -- [key] = { x, y, tx, ty } key = "me" 또는 onlineID
 local _net = { sentX = nil, sentY = nil, lastMs = 0, pendX = nil, pendY = nil }
 local _nextSweep = 0
 local _lastTick = nil
-local _nextBlendLog = 0
-local BLEND_LOG_MS = 250   -- 진단: 낙하산 중 블렌드 값 로그 간격 (자바 VpPose 의 canopy bones 로그와 같은 간격)
 
 local function log(msg) HaloDrop.log(msg) end
 
@@ -235,11 +233,6 @@ local function onTick()
         if pl then
             pcall(applyBlend, pl, pose, b)
             if key ~= "me" then snapRemote(key, pl) end
-        end
-        -- 진단 (11-23 캐노피 그네 시험): 내 낙하산 블렌드 현재값·목표값. 같은 시각의 자바 "canopy bones" 로그와 맞춰 본다
-        if key == "me" and pose == "canopy" and now >= _nextBlendLog then
-            _nextBlendLog = now + BLEND_LOG_MS
-            log(string.format("canopy blend x=%.2f y=%.2f target=(%.2f,%.2f) v=(%.2f,%.2f)", b.x, b.y, b.tx, b.ty, b.vx or 0, b.vy or 0))
         end
     end
     -- 보내지 못하고 남은 마지막 목표 (간격 제한에 걸린 것)
