@@ -1,18 +1,24 @@
 #!/usr/bin/env bash
 # Builds the optional client Java part of Halo Drop (loaded by ZombieBuddy when the player has it).
-#   source : Contents/mods/HALO Drop/42/src/halodropclient/*.java
-#   output : Contents/mods/HALO Drop/42/media/java/client/HaloDropClient.jar
-# Needs a JDK 21+ (javac, jar, javap). Compiles against the compile-only stub ./stubs/Patch.java (ZombieBuddy's legacy @Patch);
-# the game's ZombieBuddy is used at runtime, the stub is not shipped. Game and Viewpoint classes are reached by reflection.
+#   source : Contents/mods/[ZEDGROUND] HALO Drop/42/src/halodropclient/*.java (+ resources: *.mesh, *.tex in the same folder)
+#   output : Contents/mods/[ZEDGROUND] HALO Drop/42/media/java/client/HaloDropClient.jar
+# Needs a JDK 21+ (javac, jar, javap). Compiles against the compile-only stubs ./stubs/Patch.java (ZombieBuddy's legacy
+# @Patch) and ./stubs/GL33.java (LWJGL), and Viewpoint's public API (viewpoint.api.*, GhostPlane since 0.6.0).
+# None of them is shipped. Other game and Viewpoint classes are reached by reflection.
+# Usage: tools/client-java/build.sh <path to Viewpoint.jar>
+#   e.g. "/e/Steam/steamapps/workshop/content/108600/3809306528/mods/Viewpoint/42/media/java/client/Viewpoint.jar"
+# GhostPlane's mesh/texture (c17.mesh, c17.tex) are made by tools/client-java/ghost_mesh.py from the C-17 fbx/png.
 set -euo pipefail
+vp="${1:?path to Viewpoint.jar}"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../.." && pwd)"
-mod="$repo/Contents/mods/HALO Drop/42"
+mod="$repo/Contents/mods/[ZEDGROUND] HALO Drop/42"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 mkdir -p "$tmp/stubs" "$tmp/classes" "$mod/media/java/client"
-javac --release 21 -d "$tmp/stubs" "$here/stubs/Patch.java"
-javac --release 21 -Xlint:all -cp "$tmp/stubs" -d "$tmp/classes" "$mod/src/halodropclient/"*.java
+javac --release 21 -d "$tmp/stubs" "$here/stubs/Patch.java" "$here/stubs/GL33.java"
+javac --release 21 -Xlint:all -cp "$tmp/stubs:$vp" -d "$tmp/classes" "$mod/src/halodropclient/"*.java
+for r in "$mod/src/halodropclient/"*.mesh "$mod/src/halodropclient/"*.tex; do if [ -e "$r" ]; then cp "$r" "$tmp/classes/halodropclient/"; fi; done
 
 # ZombieBuddy inlines @Patch advice into the target class (another package), so every class and method the
 # advice calls must be public (0.1.0 broke on this at runtime: IllegalAccessError on every character render).

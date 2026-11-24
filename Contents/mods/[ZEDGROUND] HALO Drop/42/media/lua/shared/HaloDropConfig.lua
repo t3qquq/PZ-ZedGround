@@ -25,6 +25,19 @@ HaloDrop.JUMP_PLANE_AHEAD    = 64            -- 점프 수송기 끝 위치: 점
 HaloDrop.JUMP_PLANE_SPEED    = 12            -- 점프 수송기 속도(타일/초). LEAD 34 -> AHEAD 64 = 2.5초 동안 멀어지는 모습이 보인다
 HaloDrop.JUMP_PLANE_DROP_MS  = 600           -- 수송기가 보이기 시작한 뒤 뛰어내리기까지(ms). 구름이 걷히고 꼬리 뒤에 있는 장면을 잠깐 보여준다
 HaloDrop.JUMP_PLANE_MAX_MS   = 20000         -- 점프 수송기 최대 수명(서버). 클라 PlaneDone 이 안 와도 지운다
+-- 점프 수송기 이어 그리기 (11-24, Viewpoint 1·3인칭 전용). 실제 차량은 AHEAD 에서 지워지고(클라 로드 범위 밖으로 나가도
+-- 바닐라가 지운다), 그 순간부터 HaloDropClient.jar 의 GhostPlane 이 같은 C-17 모델을 경로 위에 직접 그린다.
+-- 차량·청크와 무관해서 로드 범위 밖까지 보인다. 아이소에서는 아무것도 안 그린다(Viewpoint 렌더 단계에 붙어 있음).
+HaloDrop.GHOST = {
+    ON      = true,
+    CRUISE  = 48,      -- 이어 그리는 동안 올라가는 속도(타일/초). 비행 경로 속도와 같게
+    ACCEL   = 4,       -- 가속(타일/초^2). JUMP_PLANE_SPEED 12 -> 48 까지 9초
+    LIFE_MS = 90000,   -- 최대 수명
+    FAR     = 2500,    -- 카메라에서 이만큼(타일) 멀어지면 끝. 마지막 FADE 비율 구간에서 서서히 투명해진다
+    FADE    = 0.3,
+    GAMMA   = 2.2,     -- 텍스처 감마. 수송기가 실제 차량보다 진하면 1.0 쪽으로, 밝고 뿌여면 키운다 (런에서 맞춤)
+    GAIN    = 1.0,     -- 밝기 배율
+}
 -- 서버 셀(64x64칸) 미리 올리기 (server/HaloDropPreload.lua). 전용 서버를 -javaagent:HaloDropAgent.jar 로 띄웠을 때만 동작한다.
 -- 경로 미리 생성 (C안, 11-17): 처음 가는 지역은 서버가 청크를 새로 만들어야 해서 강하 중 수평 이동이 막힌다
 -- (같은 곳 두 번째 비행은 덜 막힘). 라운드 시작을 누르면 경로를 먼저 정하고, 수송기가 뜨기 전에 경로 양옆

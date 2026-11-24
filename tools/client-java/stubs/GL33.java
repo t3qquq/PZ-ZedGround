@@ -24,6 +24,16 @@ public final class GL33 {
     public static final int GL_TEXTURE_BINDING_2D = 0x8069, GL_TEXTURE_COMPARE_MODE = 0x884C;
     public static final int GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE = 0x8CD0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME = 0x8CD1, GL_COLOR_ATTACHMENT0 = 0x8CE0, GL_DEPTH_ATTACHMENT = 0x8D00;
 
+    // Halo Drop GhostPlane (0.6.0): textured mesh from a vertex buffer
+    public static final int GL_FLOAT = 0x1406, GL_UNSIGNED_BYTE = 0x1401, GL_RGBA = 0x1908, GL_RGBA8 = 0x8058;
+    public static final int GL_ARRAY_BUFFER = 0x8892, GL_ARRAY_BUFFER_BINDING = 0x8894, GL_STATIC_DRAW = 0x88E4;
+    public static final int GL_PIXEL_UNPACK_BUFFER = 0x88EC, GL_PIXEL_UNPACK_BUFFER_BINDING = 0x88EF;
+    public static final int GL_UNPACK_ROW_LENGTH = 0x0CF2, GL_UNPACK_ALIGNMENT = 0x0CF5;
+    public static final int GL_TEXTURE_MAG_FILTER = 0x2800, GL_TEXTURE_MIN_FILTER = 0x2801, GL_TEXTURE_WRAP_S = 0x2802, GL_TEXTURE_WRAP_T = 0x2803;
+    public static final int GL_LINEAR = 0x2601, GL_LINEAR_MIPMAP_LINEAR = 0x2703, GL_REPEAT = 0x2901;
+    public static final int GL_TEXTURE0 = 0x84C0, GL_ACTIVE_TEXTURE = 0x84E0, GL_SAMPLER_BINDING = 0x8919;
+    public static final int GL_BACK = 0x0405, GL_CCW = 0x0901, GL_CULL_FACE_MODE = 0x0B45, GL_FRONT_FACE = 0x0B46;
+
     public static native void glBindTexture(int target, int texture);
     public static native int glGetError();
     public static native int glGetFramebufferAttachmentParameteri(int target, int attachment, int pname);
@@ -66,4 +76,22 @@ public final class GL33 {
     public static native void glUniformMatrix4fv(int location, boolean transpose, float[] value);
     public static native void glUseProgram(int program);
     public static native void glViewport(int x, int y, int w, int h);
+
+    // Halo Drop GhostPlane (0.6.0)
+    public static native int glGenBuffers();
+    public static native void glBindBuffer(int target, int buffer);
+    public static native void glBufferData(int target, java.nio.ByteBuffer data, int usage);
+    public static native void glVertexAttribPointer(int index, int size, int type, boolean normalized, int stride, long pointer);
+    public static native void glEnableVertexAttribArray(int index);
+    public static native int glGenTextures();
+    public static native void glTexImage2D(int target, int level, int internalformat, int width, int height, int border, int format, int type, java.nio.ByteBuffer pixels);
+    public static native void glTexParameteri(int target, int pname, int param);
+    public static native void glGenerateMipmap(int target);
+    public static native void glActiveTexture(int texture);
+    public static native void glBindSampler(int unit, int sampler);
+    public static native void glPixelStorei(int pname, int param);
+    public static native void glCullFace(int mode);
+    public static native void glFrontFace(int dir);
+    public static native void glUniform1i(int location, int v0);
+    public static native void glUniform3f(int location, float v0, float v1, float v2);
 }

@@ -9,6 +9,8 @@
 -- 이동: setWorldTransform (내부 Bullet.teleportVehicle). 목적지 칸이 이 클라에 안 올라와 있으면 그 틱은
 --   옮기지 않는다 -- 옮겨 봐야 BaseVehicle.update 가 이전 청크 안으로 되돌린다(b42.21 :3430~3450).
 -- 높이 PlaneZ(층) x PHYS_PER_FLOOR.
+-- 이어 그리기 (11-24): AHEAD 를 지나 차량을 지우는 순간 HaloDrop.Ghost 를 올린다. Viewpoint 1·3인칭이면
+--   HaloDropClient.jar GhostPlane 이 그 자리부터 같은 모델을 직접 그려 멀어지게 한다 (HaloDrop.GHOST).
 
 if isServer() then return end
 
@@ -41,6 +43,26 @@ local function findPlane(vid)
     local okS, sn = pcall(function() return v:getScriptName() end)
     if okS and sn == HaloDrop.PLANE_SCRIPT then return v end
     return nil
+end
+
+-- 실제 차량을 지우기 직전, 지금 차량 위치에서 이어 그릴 상태를 올린다 (자바 GhostPlane 이 LuaManager.env 에서 읽음).
+-- 표는 통째로 바꾼다(자바가 다른 스레드에서 읽는다). id 가 바뀌면 새 비행으로 본다.
+local function publishGhost(v, speed)
+    local G = HaloDrop.GHOST
+    if not G or not G.ON then return end
+    local ok, vx, vy = pcall(function() return v:getX(), v:getY() end)
+    if not ok or not vx then
+        log("ghost plane NOT published: vehicle position unreadable err=" .. tostring(vx))
+        return
+    end
+    local now = getTimestampMs()
+    HaloDrop.Ghost = {
+        id = now, t0 = now, x = vx, y = vy, dx = _run.dx, dy = _run.dy, z = HaloDrop.opt("PlaneZ"),
+        v0 = speed, v1 = G.CRUISE, acc = G.ACCEL, life = G.LIFE_MS, far = G.FAR, fade = G.FADE,
+        gamma = G.GAMMA, gain = G.GAIN,
+    }
+    log(string.format("ghost plane published at (%.1f,%.1f) dir=(%.2f,%.2f) v0=%.1f -> %.1f (drawn only in Viewpoint 1st/3rd person)",
+        vx, vy, _run.dx, _run.dy, speed, G.CRUISE))
 end
 
 local function finishRun(why)
@@ -113,6 +135,7 @@ local function pilotTick()
         if HaloDropJumper and HaloDropJumper.onPlanePassed then HaloDropJumper.onPlanePassed() end
     end
     if s > HaloDrop.JUMP_PLANE_AHEAD then
+        publishGhost(v, speed)
         finishRun("passed ahead")
         return
     end
