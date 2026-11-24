@@ -237,6 +237,7 @@ public final class GhostPlane {
         t0 = (long) num(st, "t0", System.currentTimeMillis());
         hasPose = readPose(st);
         flying = true;
+        log("handoff compare (measurement): " + PlaceProbe.last());
         frames = 0; farFrames = 0; firstDrawLogged = false;
         nextStat = System.currentTimeMillis() + STAT_MS;
         log("ghost start id=" + (long) id + " at (" + f1(x0) + "," + f1(y0) + ") z=" + f1(z) + " dir=(" + f2(dx) + "," + f2(dy) + ")"
