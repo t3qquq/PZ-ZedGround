@@ -35,6 +35,14 @@ import static org.lwjgl.opengl.GL33.*;
  *   projection but a far plane behind the plane, without the depth test (back faces culled so it still reads solid).
  *   Up close the depth test sorts the faces and nothing is culled.
  *   Nothing of the scene is that far away in front of a plane in the sky.
+ * Start pose (0.6.1, run 11-24): the first frames used the route line, PlaneZ and a level plane, while the real
+ *   vehicle sat ~1 tile higher, ~2 tiles to the side and slightly yawed/rolled (Bullet keeps it a little off).
+ *   Lua now passes the real vehicle's model origin (BaseVehicle.getWorldPos(0,0,0): physics origin, z in floors
+ *   = physics y / 2.44949) and its forward/up vectors (physics space: x = world x, y = up, z = world y). The ghost
+ *   starts exactly there and eases to level flight along the route over ALIGN_S.
+ * Overlap (0.6.1): for ~3 frames both planes were drawn until the server's removal arrived. PatchVpVehicleHide skips
+ *   Viewpoint's capture of a C-17 within HIDE_REACH tiles of the ghost start for HIDE_MS after it, read straight from
+ *   the Lua table on the game thread, so the real one is gone the frame the ghost is published.
  * Lua -> Java: no bridge. HaloDrop.Ghost is read from LuaManager.env by reflection, like Lens and Blue Zone.
  *   Lua replaces the table as a whole; a new `id` starts a new flight.
  * Public for the same reason as SkyLight: ZombieBuddy inlines the advice into Viewpoint's class.
@@ -50,6 +58,10 @@ public final class GhostPlane {
     static final float[] HAZE = { 0.62f, 0.68f, 0.76f };  // far haze colour (times the ambient)
     static final float HAZE_DIST = 1800f;       // tiles where the haze reaches HAZE_MAX
     static final float HAZE_MAX = 0.55f;
+    static final double ALIGN_S = 1.5;          // seconds from the real vehicle's pose to level flight on the route
+    static final String PLANE_SUFFIX = "HaloDropC17";
+    static final double HIDE_REACH = 40.0;      // tiles: real C-17 this close to the ghost start is not drawn by Viewpoint
+    static final long HIDE_MS = 15000L;         // the server removes the real one well before this
 
     static final String VS =
             "#version 330 core\n" +
@@ -110,8 +122,16 @@ public final class GhostPlane {
     private long nextState;
     private Object lastTable;
     private double flightId = Double.NaN;
-    private boolean flying;
+    private volatile boolean flying;
     private double x0, y0, dx, dy, z, v0, v1, acc, life, far, fade, gamma = 2.2, gain = 1.0;
+    private final double[] f0 = new double[3], u0 = new double[3];   // start pose in render space (nose, up)
+    private boolean hasPose;
+
+    // hiding the real vehicle (game thread, Viewpoint snapshot)
+    private boolean hideResolved, hideBroken;
+    private Method mVehScript, mVehX, mVehY;
+    private int hiddenFrames;
+    private double hiddenLoggedId = Double.NaN;
     private long t0;
 
     // ambient (vanilla RenderSettings, the value Halo Drop's SkyLight also reads)
@@ -127,6 +147,7 @@ public final class GhostPlane {
     private double lastS, lastDist, lastAlpha;
 
     private final float[] model = new float[16];
+    private final double[] fw = new double[3], up = new double[3], rt = new double[3];
     private final float[] projFar = new float[16];
 
     public static void log(String s) { System.out.println(TAG + s); }
@@ -160,8 +181,13 @@ public final class GhostPlane {
 
     private void readState() throws Exception {
         long n = System.nanoTime();
-        if (n < nextState) return;
+        if (flying && n < nextState) return;      // idle: every frame, so the ghost appears the frame the real one is hidden
         nextState = n + STATE_NS;
+        resolveLua();
+        readTable();
+    }
+
+    private void resolveLua() throws Exception {
         if (!luaResolved) {
             ClassLoader cl = GhostPlane.class.getClassLoader();
             fEnv = Class.forName("zombie.Lua.LuaManager", false, cl).getField("env");
@@ -169,7 +195,14 @@ public final class GhostPlane {
             luaResolved = true;
             log("state lookups resolved (LuaManager.env, KahluaTable.rawget)");
         }
-        Object st = get(get(fEnv.get(null), "HaloDrop"), "Ghost");
+    }
+
+    private Object ghostTable() throws Exception {
+        return get(get(fEnv.get(null), "HaloDrop"), "Ghost");
+    }
+
+    private void readTable() throws Exception {
+        Object st = ghostTable();
         if (st == lastTable) return;
         lastTable = st;
         if (st == null) {
@@ -197,18 +230,85 @@ public final class GhostPlane {
         gamma = num(st, "gamma", 2.2);
         gain = num(st, "gain", 1.0);
         t0 = (long) num(st, "t0", System.currentTimeMillis());
+        hasPose = readPose(st);
         flying = true;
         frames = 0; farFrames = 0; firstDrawLogged = false;
         nextStat = System.currentTimeMillis() + STAT_MS;
         log("ghost start id=" + (long) id + " at (" + f1(x0) + "," + f1(y0) + ") z=" + f1(z) + " dir=(" + f2(dx) + "," + f2(dy) + ")"
                 + " v0=" + f1(v0) + " v1=" + f1(v1) + " acc=" + f1(acc) + " life=" + (long) life + "ms far=" + (long) far
-                + " fade=" + f2(fade) + " gamma=" + f2(gamma) + " gain=" + f2(gain) + " lag=" + (System.currentTimeMillis() - t0) + "ms");
+                + " fade=" + f2(fade) + " gamma=" + f2(gamma) + " gain=" + f2(gain) + " lag=" + (System.currentTimeMillis() - t0) + "ms"
+                + (hasPose ? " pose nose=(" + f2(f0[0]) + "," + f2(f0[1]) + "," + f2(f0[2]) + ") up=(" + f2(u0[0]) + "," + f2(u0[1]) + "," + f2(u0[2]) + ")"
+                        + " yawOff=" + f1(Math.toDegrees(Math.atan2(f0[0] * -dy - f0[2] * -dx, f0[0] * -dx + f0[2] * -dy))) + "deg"
+                           : " pose=level (no vectors from Lua)"));
+    }
+
+    /** real vehicle's forward/up (physics space) -> render space nose/up; false when Lua sent none */
+    private boolean readPose(Object st) throws Exception {
+        double fx = num(st, "fx", Double.NaN), fy = num(st, "fy", Double.NaN), fz = num(st, "fz", Double.NaN);
+        double ux = num(st, "ux", Double.NaN), uy = num(st, "uy", Double.NaN), uz = num(st, "uz", Double.NaN);
+        if (Double.isNaN(fx + fy + fz + ux + uy + uz)) return false;
+        // physics (x = world x, y = up, z = world y) -> render (x = -world dx, y = up, z = -world dy)
+        f0[0] = -fx; f0[1] = fy; f0[2] = -fz;
+        u0[0] = -ux; u0[1] = uy; u0[2] = -uz;
+        if (norm(f0) < 1e-6 || norm(u0) < 1e-6) return false;
+        // the mesh nose is +z; if the vehicle's forward column points at the tail, turn the pose around the up axis
+        if (f0[0] * -dx + f0[2] * -dy < 0) {
+            f0[0] = -f0[0]; f0[1] = -f0[1]; f0[2] = -f0[2];
+            log("vehicle forward points backwards along the route, pose turned 180 deg");
+        }
+        return true;
+    }
+
+    static double norm(double[] v) {
+        double l = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        if (l > 1e-9) { v[0] /= l; v[1] /= l; v[2] /= l; }
+        return l;
+    }
+
+    /** PatchVpVehicleHide (Viewpoint snapshot, game thread): true = do not capture this vehicle */
+    public static boolean hideVehicle(Object vehicle) {
+        return INSTANCE.hide(vehicle);
+    }
+
+    private boolean hide(Object v) {
+        if (hideBroken || v == null) return false;
+        try {
+            if (!hideResolved) {
+                Class<?> veh = Class.forName("zombie.vehicles.BaseVehicle", false, GhostPlane.class.getClassLoader());
+                mVehScript = veh.getMethod("getScriptName");
+                mVehX = veh.getMethod("getX");
+                mVehY = veh.getMethod("getY");
+                hideResolved = true;
+            }
+            Object name = mVehScript.invoke(v);
+            if (!(name instanceof String) || !((String) name).endsWith(PLANE_SUFFIX)) return false;
+            resolveLua();
+            Object st = ghostTable();
+            if (st == null) return false;
+            double t = num(st, "t0", Double.NaN), id = num(st, "id", Double.NaN);
+            if (Double.isNaN(t) || System.currentTimeMillis() - (long) t > HIDE_MS) return false;
+            double gx = num(st, "x", Double.NaN), gy = num(st, "y", Double.NaN);
+            double vx = ((Number) mVehX.invoke(v)).doubleValue(), vy = ((Number) mVehY.invoke(v)).doubleValue();
+            if (Double.isNaN(gx) || Math.hypot(vx - gx, vy - gy) > HIDE_REACH) return false;
+            hiddenFrames++;
+            if (id != hiddenLoggedId) {
+                hiddenLoggedId = id;
+                log("real jump plane hidden in Viewpoint from now on (at " + f1(vx) + "," + f1(vy) + ", ghost start "
+                        + f1(gx) + "," + f1(gy) + ", " + (System.currentTimeMillis() - (long) t) + "ms after publish)");
+            }
+            return true;
+        } catch (Throwable e) {
+            hideBroken = true;
+            log("real plane hide FAILED, both planes may show for a few frames: " + e);
+            return false;
+        }
     }
 
     private void end(String why) {
         flying = false;
         log("ghost done (" + why + ") id=" + (long) flightId + " t=" + f1((System.currentTimeMillis() - t0) / 1000.0) + "s s=" + f1(lastS)
-                + " tiles dist=" + f1(lastDist) + " frames=" + frames + " farFrames=" + farFrames);
+                + " tiles dist=" + f1(lastDist) + " frames=" + frames + " farFrames=" + farFrames + " realHiddenFrames=" + hiddenFrames);
+        hiddenFrames = 0;
     }
 
     /** tiles flown since the start: v0, accelerating by acc up to v1 */
@@ -415,11 +515,20 @@ public final class GhostPlane {
             double alpha = 1.0 - smooth(far * (1.0 - fade), far, dist);
             lastAlpha = alpha;
 
-            // model: columns right, up, nose, position. nose = render (-dx, -dy); right = up x nose
-            float fx = (float) -dx, fz = (float) -dy;
-            model[0] = fz;  model[1] = 0f; model[2] = -fx; model[3] = 0f;
-            model[4] = 0f;  model[5] = 1f; model[6] = 0f;  model[7] = 0f;
-            model[8] = fx;  model[9] = 0f; model[10] = fz; model[11] = 0f;
+            // model: columns right, up, nose, position. Level pose: nose = render (-dx, 0, -dy), up = +y.
+            // From the real vehicle's pose (hasPose) to the level pose over ALIGN_S; right = up x nose.
+            double k = hasPose ? smooth(0, ALIGN_S, t) : 1.0;
+            fw[0] = f0[0] + (-dx - f0[0]) * k; fw[1] = f0[1] * (1 - k); fw[2] = f0[2] + (-dy - f0[2]) * k;
+            up[0] = u0[0] * (1 - k);           up[1] = u0[1] + (1 - u0[1]) * k; up[2] = u0[2] * (1 - k);
+            if (!hasPose) { fw[0] = -dx; fw[1] = 0; fw[2] = -dy; up[0] = 0; up[1] = 1; up[2] = 0; }
+            norm(fw);
+            double ud = up[0] * fw[0] + up[1] * fw[1] + up[2] * fw[2];
+            up[0] -= fw[0] * ud; up[1] -= fw[1] * ud; up[2] -= fw[2] * ud;
+            norm(up);
+            rt[0] = up[1] * fw[2] - up[2] * fw[1]; rt[1] = up[2] * fw[0] - up[0] * fw[2]; rt[2] = up[0] * fw[1] - up[1] * fw[0];
+            model[0] = (float) rt[0]; model[1] = (float) rt[1]; model[2] = (float) rt[2];  model[3] = 0f;
+            model[4] = (float) up[0]; model[5] = (float) up[1]; model[6] = (float) up[2];  model[7] = 0f;
+            model[8] = (float) fw[0]; model[9] = (float) fw[1]; model[10] = (float) fw[2]; model[11] = 0f;
             model[12] = (float) rx; model[13] = (float) ry; model[14] = (float) rz; model[15] = 1f;
 
             double[] nf = nearFar(proj, colMajor);

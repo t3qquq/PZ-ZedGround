@@ -50,19 +50,25 @@ end
 local function publishGhost(v, speed)
     local G = HaloDrop.GHOST
     if not G or not G.ON then return end
-    local ok, vx, vy = pcall(function() return v:getX(), v:getY() end)
-    if not ok or not vx then
-        log("ghost plane NOT published: vehicle position unreadable err=" .. tostring(vx))
-        return
+    -- the real vehicle's model origin and orientation, so the drawn plane starts exactly where the real one is (11-24 run:
+    -- route line + PlaneZ + level pose was ~1 tile low, ~2 tiles to the side, slightly yawed/rolled)
+    local ok, err = pcall(function()
+        local p = v:getWorldPos(0, 0, 0, Vector3f.new())
+        local f = v:getForwardVector(Vector3f.new())
+        local u = v:getUpVector(Vector3f.new())
+        local now = getTimestampMs()
+        HaloDrop.Ghost = {
+            id = now, t0 = now, x = p:x(), y = p:y(), z = p:z(), dx = _run.dx, dy = _run.dy,
+            fx = f:x(), fy = f:y(), fz = f:z(), ux = u:x(), uy = u:y(), uz = u:z(),
+            v0 = speed, v1 = G.CRUISE, acc = G.ACCEL, life = G.LIFE_MS, far = G.FAR, fade = G.FADE,
+            gamma = G.GAMMA, gain = G.GAIN,
+        }
+        log(string.format("ghost plane published at (%.2f,%.2f,%.2f) fwd=(%.3f,%.3f,%.3f) up=(%.3f,%.3f,%.3f) dir=(%.2f,%.2f) v0=%.1f -> %.1f (drawn only in Viewpoint 1st/3rd person)",
+            p:x(), p:y(), p:z(), f:x(), f:y(), f:z(), u:x(), u:y(), u:z(), _run.dx, _run.dy, speed, G.CRUISE))
+    end)
+    if not ok then
+        log("ghost plane NOT published: vehicle pose unreadable err=" .. tostring(err))
     end
-    local now = getTimestampMs()
-    HaloDrop.Ghost = {
-        id = now, t0 = now, x = vx, y = vy, dx = _run.dx, dy = _run.dy, z = HaloDrop.opt("PlaneZ"),
-        v0 = speed, v1 = G.CRUISE, acc = G.ACCEL, life = G.LIFE_MS, far = G.FAR, fade = G.FADE,
-        gamma = G.GAMMA, gain = G.GAIN,
-    }
-    log(string.format("ghost plane published at (%.1f,%.1f) dir=(%.2f,%.2f) v0=%.1f -> %.1f (drawn only in Viewpoint 1st/3rd person)",
-        vx, vy, _run.dx, _run.dy, speed, G.CRUISE))
 end
 
 local function finishRun(why)
