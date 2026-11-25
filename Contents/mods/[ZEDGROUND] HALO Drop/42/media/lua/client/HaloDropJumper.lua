@@ -1230,6 +1230,29 @@ local function onKeyPressed(key)
 end
 Events.OnKeyPressed.Add(onKeyPressed)
 
+-- ── Viewpoint Advanced Movement 끄기 신호 (11-25) ─────────────────────────────
+-- AM(창작마당 3812702301)은 HALO 상태를 모른다. 탑승(리그 위에 숨김)·강하 중에도 Q/E 기울이기, 엎드리기, Space 점프,
+-- 상호작용 키 재배치(E -> F, 그래서 뛰어내리기·낙하산 키가 F 가 됐다)를 받는다.
+-- J.state 가 있는 동안(ABOARD ~ CANOPY) 매 틱 HaloDrop.AmBlock = { state, at } 을 새 표로 올리면 HaloDropClient.jar 의
+-- AmGate 가 AM 입력을 끈다(AmGate.java 머리말). 착지(finish)로 J.state 가 nil 이 되면 표를 지우고, 표가 1초 넘게
+-- 갱신되지 않아도 자바는 꺼짐을 푼다. AM 의 머리·점프 자세 덧씌우기는 HaloDropPose 애니 변수로 따로 끈다(VpPose).
+-- AM 이나 자바(ZombieBuddy)가 없으면 표만 올라가고 아무 일도 없다.
+local _amGate = nil
+local function amGateTick()
+    if J.state then
+        HaloDrop.AmBlock = { state = J.state, at = getTimestampMs() }
+        if _amGate ~= J.state then
+            log("AM gate: published state=" .. tostring(J.state) .. " (Advanced Movement input off while it lasts)")
+            _amGate = J.state
+        end
+    elseif HaloDrop.AmBlock or _amGate then
+        HaloDrop.AmBlock = nil
+        log("AM gate: cleared (last state=" .. tostring(_amGate) .. ")")
+        _amGate = nil
+    end
+end
+Events.OnTick.Add(amGateTick)
+
 local function onPlayerDeath(p)
     if p == getPlayer() and J.state then
         log("died during state " .. tostring(J.state))

@@ -13,6 +13,8 @@ import java.lang.reflect.Method;
  *   out to the side, the other across the body. The clips themselves are left/right symmetric.
  * What: while the character has the anim variable HaloDropPose (freefall and canopy, set by HaloDropPose.lua), both
  *   methods are skipped, so the skeleton stays exactly as the Halo Drop clips posed it. Everyone else is untouched.
+ *   11-25: the same condition also skips Viewpoint Advanced Movement's bone pass (PatchAmPose, which 2): its own head
+ *   follow and jump tuck were laid over the drop poses. See AmGate.
  * If Viewpoint is not installed the target classes never load and the patches do nothing. If Viewpoint renames the
  * methods, ZombieBuddy logs that the patch found nothing and the arm problem comes back (nothing else breaks).
  * Public for the same reason as SkyLight: ZombieBuddy inlines the advice into Viewpoint's class.
@@ -27,10 +29,11 @@ public final class VpPose {
     private static boolean resolved, broken;
     private static Method mChar, mGetVar;
     private static int errors;
-    private static final boolean[] last = new boolean[2];
-    private static final boolean[] seen = new boolean[2];
-    private static final int[] skipped = new int[2];
-    private static final String[] NAME = { "HeadLook.posed", "ArmsPitch.posed" };
+    private static final boolean[] last = new boolean[3];
+    private static final boolean[] seen = new boolean[3];
+    private static final int[] skipped = new int[3];
+    private static final String[] NAME = { "viewpoint.input.HeadLook.posed", "viewpoint.input.ArmsPitch.posed",
+            "com.viewpointmovement.core.PoseApplier.posed (Advanced Movement)" };
 
     private static Method mLocal;
 
@@ -38,7 +41,7 @@ public final class VpPose {
 
     public static void log(String s) { System.out.println(TAG + s); }
 
-    /** true = skip Viewpoint's bone turn for this skeleton. which: 0 head look, 1 arms pitch */
+    /** true = skip the bone turn for this skeleton. which: 0 Viewpoint head look, 1 Viewpoint arms pitch, 2 Advanced Movement */
     public static boolean skip(Object animationPlayer, int which) {
         if (broken || animationPlayer == null) return false;
         try {
@@ -52,7 +55,7 @@ public final class VpPose {
             }
             if (!seen[which]) {
                 seen[which] = true;
-                log("patch reached: viewpoint.input." + NAME[which]);
+                log("patch reached: " + NAME[which]);
             }
             Object chr = mChar.invoke(animationPlayer);
             if (chr == null) return false;
@@ -66,7 +69,7 @@ public final class VpPose {
                         skipped[which] = 1;
                         log(NAME[which] + " skipped for the local player from now on (pose=" + v + ")");
                     } else {
-                        log(NAME[which] + " back to Viewpoint for the local player (skipped " + skipped[which] + " times)");
+                        log(NAME[which] + " back for the local player (skipped " + skipped[which] + " times)");
                     }
                 }
             }
@@ -76,7 +79,7 @@ public final class VpPose {
             if (errors <= 5) log("skip check failed (" + errors + "): " + t);
             if (!resolved || errors >= 20) {
                 broken = true;
-                log("off: Viewpoint's bone turns are no longer skipped");
+                log("off: Viewpoint's and Advanced Movement's bone turns are no longer skipped");
             }
             return false;
         }
