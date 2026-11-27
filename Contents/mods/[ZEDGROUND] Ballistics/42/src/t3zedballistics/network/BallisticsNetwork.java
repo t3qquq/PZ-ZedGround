@@ -9,6 +9,7 @@ import t3zedballistics.projectile.ProjectilePool;
 import t3zedballistics.projectile.ShotGroup;
 import zombie.CombatManager;
 import zombie.characters.IsoGameCharacter;
+import zombie.iso.IsoGridSquare;
 import zombie.iso.IsoUtils;
 import zombie.network.GameClient;
 import zombie.network.PacketTypes;
@@ -127,6 +128,13 @@ public final class BallisticsNetwork {
             double best = Double.MAX_VALUE;
             for (int i = 0; i < g.targetCount; i++) {
                 lists.add(new CombatManager.TargetHitList(g.targets[i], new ArrayList<>(g.hits[i])));
+                // Diagnostic: the server drops an entry whose zombie it no longer has ("PlayerHitZombie/PlayerHitPacket
+                // is not consistent"), seen in the 11-27 run for targets this shot had already killed.
+                if (g.targets[i] instanceof IsoGameCharacter dead && dead.isDead()) {
+                    Log.info("net shot #" + g.seq + ": target " + dead.getClass().getSimpleName() + "#" + dead.getOnlineID()
+                        + " is already dead when the packet is sent, " + String.format("%.0fms", (System.nanoTime() - g.firedNanos) / 1e6)
+                        + " after firing (pending shots " + pending.size() + ")");
+                }
                 // the server judges the attack by its closest character target (PlayerHitPacket.processServer)
                 if (g.targets[i] instanceof IsoGameCharacter c) {
                     double d = IsoUtils.DistanceTo(c.getX(), c.getY(), g.shooter.getX(), g.shooter.getY());
@@ -138,8 +146,16 @@ public final class BallisticsNetwork {
             }
         }
         boolean wasCrit = g.shooter.isCriticalHit();
+        // A "hit nothing" entry (PlayerHitSquarePacket) carries the shooter's attack target square, and the
+        // server drops the entry when that square is missing ("PlayerHitSquare/PlayerHitPacket is not
+        // consistent"). Vanilla sets it from the mouse pick when the attack starts, which Viewpoint aiming
+        // never provides, so it is the shooter's own square for the send (always loaded on the server, and
+        // distance 0 for the long-distance anti-cheat). Restored afterwards.
+        IsoGridSquare wasTarget = g.shooter.getAttackTargetSquare();
+        boolean setTarget = g.targetCount == 0;
         try {
             g.shooter.setCriticalHit(crit);
+            if (setTarget && g.shooter.getCurrentSquare() != null) g.shooter.setAttackTargetSquare(g.shooter.getCurrentSquare());
             INetworkPacket.send(PacketTypes.PacketType.PlayerHit, g.shooter, g.weapon, lists, g.tracers);
             count(1);
             shotsSent++;
@@ -149,6 +165,7 @@ public final class BallisticsNetwork {
             }
         } finally {
             g.shooter.setCriticalHit(wasCrit);
+            if (setTarget) g.shooter.setAttackTargetSquare(wasTarget);
             lists.clear();
         }
     }
