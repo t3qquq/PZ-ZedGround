@@ -1,0 +1,189 @@
+package t3zedballistics.config;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
+
+import t3zedballistics.Log;
+import zombie.SandboxOptions;
+import zombie.ZomboidFileSystem;
+
+/**
+ * Two layers of settings.
+ *
+ * Gameplay values live in sandbox options (media/sandbox-options.txt, page "ZedBallistics"). In multiplayer the
+ * server's values are synced to every client by the game, so everyone simulates the same ballistics and
+ * a client cannot give itself flatter bullets.
+ *
+ * Personal/developer switches (debug drawing, logging) live in a small local file
+ * Zomboid/ViewpointTrueBallistics/settings.ini that is created on first start.
+ */
+public final class BallisticsConfig {
+
+    // ---- gameplay (sandbox; defaults used until the sandbox is available) ----
+    public static volatile boolean enabled = true;
+    public static volatile boolean useInIsoView = false;
+    public static volatile double gravityScale = 1.0;
+    public static volatile double velocityScale = 0.4;
+    public static volatile double dragScale = 1.0;
+    public static volatile double damageFalloff = 0.5;
+    public static volatile double projectileLifetime = 3.0;
+    public static volatile double maxDistanceMultiplier = 3.0;
+    public static volatile double maxDistanceCap = 200.0;
+    public static volatile boolean penetration = true;
+    public static volatile boolean hitLocations = true;
+    public static volatile double zeroDistance = 0.0;
+    public static volatile double spreadScale = 1.0;
+    public static volatile boolean serverValidation = true;
+    public static volatile boolean furnitureCollision = true;
+
+    // ---- local developer switches ----
+    public static volatile boolean debugTrajectories = false;
+    public static volatile boolean debugImpacts = false;
+    public static volatile boolean debugNetwork = false;
+    /** Live hit capsules of nearby characters (ZGB_debug("hitboxes", true)); this session only, not saved. */
+    public static volatile boolean debugHitboxes = false;
+    public static volatile boolean verbose = false;
+    public static volatile int tracerEvery = 0;
+    public static volatile double debugLifetime = 4.0;
+
+    /** Physical constants that are not worth a setting. */
+    public static final double GRAVITY = 9.81;           // m/s^2
+    public static final double MIN_SPEED = 40.0;         // m/s, below this (or 25% of muzzle speed) a round is spent
+    public static final double MAX_SEGMENT = 4.0;        // m, longest straight piece of a curved path
+    public static final double LOW_OBSTACLE_HEIGHT = 1.0;// m, low walls / hoppable fences
+    public static final double WINDOW_VELOCITY_KEEP = 0.85;
+
+    private static final String[] SANDBOX_KEYS = {
+        "Enabled", "UseInIsoView", "GravityScale", "VelocityScale", "DragScale", "DamageFalloff",
+        "ProjectileLifetime", "MaxDistanceMultiplier", "MaxDistanceCap", "Penetration", "HitLocations",
+        "ZeroDistance", "SpreadScale", "ServerValidation", "FurnitureCollision"
+    };
+    private static boolean sandboxWarned;
+
+    /** Re-reads the sandbox values. Cheap (a few hash lookups); called about once a second. */
+    public static void refreshSandbox() {
+        try {
+            SandboxOptions so = SandboxOptions.instance;
+            if (so == null) return;
+            enabled = bool(so, "Enabled", enabled);
+            useInIsoView = bool(so, "UseInIsoView", useInIsoView);
+            gravityScale = num(so, "GravityScale", gravityScale, 0, 10);
+            velocityScale = num(so, "VelocityScale", velocityScale, 0.05, 3);
+            dragScale = num(so, "DragScale", dragScale, 0, 10);
+            damageFalloff = num(so, "DamageFalloff", damageFalloff, 0, 1);
+            projectileLifetime = num(so, "ProjectileLifetime", projectileLifetime, 0.2, 20);
+            maxDistanceMultiplier = num(so, "MaxDistanceMultiplier", maxDistanceMultiplier, 1, 20);
+            maxDistanceCap = num(so, "MaxDistanceCap", maxDistanceCap, 10, 1000);
+            penetration = bool(so, "Penetration", penetration);
+            hitLocations = bool(so, "HitLocations", hitLocations);
+            zeroDistance = num(so, "ZeroDistance", zeroDistance, 0, 1000);
+            spreadScale = num(so, "SpreadScale", spreadScale, 0, 10);
+            serverValidation = bool(so, "ServerValidation", serverValidation);
+            furnitureCollision = bool(so, "FurnitureCollision", furnitureCollision);
+        } catch (Throwable t) {
+            if (!sandboxWarned) { sandboxWarned = true; Log.error("reading sandbox options failed; defaults stay in use", t); }
+        }
+    }
+
+    private static Object raw(SandboxOptions so, String key) {
+        SandboxOptions.SandboxOption o = so.getOptionByName("ZedBallistics." + key);
+        if (o == null) return null;
+        return o.asConfigOption().getValueAsObject();
+    }
+
+    private static boolean bool(SandboxOptions so, String key, boolean def) {
+        Object v = raw(so, key);
+        return v instanceof Boolean b ? b : def;
+    }
+
+    private static double num(SandboxOptions so, String key, double def, double min, double max) {
+        Object v = raw(so, key);
+        double d = v instanceof Number n ? n.doubleValue() : def;
+        if (!Double.isFinite(d)) d = def;
+        return Math.max(min, Math.min(max, d));
+    }
+
+    // ------------------------------------------------------------------ local file
+
+    public static File localFile() {
+        String dir = ZomboidFileSystem.instance.getCacheDir();
+        return new File(new File(dir, "ZedBallistics"), "settings.ini");
+    }
+
+    public static void loadLocal() {
+        try {
+            File f = localFile();
+            if (!f.exists()) { saveLocal(); return; }
+            Properties p = new Properties();
+            try (InputStream in = new FileInputStream(f)) { p.load(in); }
+            debugTrajectories = pb(p, "debugTrajectories", debugTrajectories);
+            debugImpacts = pb(p, "debugImpacts", debugImpacts);
+            debugNetwork = pb(p, "debugNetwork", debugNetwork);
+            verbose = pb(p, "verbose", verbose);
+            tracerEvery = (int) pd(p, "tracerEvery", tracerEvery, 0, 100);
+            debugLifetime = pd(p, "debugLifetime", debugLifetime, 0.5, 60);
+            t3zedballistics.effects.ImpactEffects.enabled = pb(p, "impactEffects", t3zedballistics.effects.ImpactEffects.enabled);
+            t3zedballistics.effects.ImpactEffects.maxHoles = (int) pd(p, "bulletHoles", t3zedballistics.effects.ImpactEffects.maxHoles, 0, 2000);
+            t3zedballistics.effects.ImpactEffects.holeMinutes = pd(p, "bulletHoleMinutes", t3zedballistics.effects.ImpactEffects.holeMinutes, 0.5, 1440);
+            t3zedballistics.effects.ImpactEffects.debrisAmount = pd(p, "debrisAmount", t3zedballistics.effects.ImpactEffects.debrisAmount, 0, 3);
+            if (p.getProperty("impactEffects") == null) saveLocal(); // add the new keys to an older file
+        } catch (Throwable t) {
+            Log.error("could not read " + localFile(), t);
+        }
+    }
+
+    public static void saveLocal() {
+        try {
+            File f = localFile();
+            File parent = f.getParentFile();
+            if (parent != null && !parent.isDirectory() && !parent.mkdirs()) {
+                Log.warn("could not create " + parent);
+                return;
+            }
+            Properties p = new Properties();
+            p.setProperty("debugTrajectories", Boolean.toString(debugTrajectories));
+            p.setProperty("debugImpacts", Boolean.toString(debugImpacts));
+            p.setProperty("debugNetwork", Boolean.toString(debugNetwork));
+            p.setProperty("verbose", Boolean.toString(verbose));
+            p.setProperty("tracerEvery", Integer.toString(tracerEvery));
+            p.setProperty("debugLifetime", Double.toString(debugLifetime));
+            p.setProperty("impactEffects", Boolean.toString(t3zedballistics.effects.ImpactEffects.enabled));
+            p.setProperty("bulletHoles", Integer.toString(t3zedballistics.effects.ImpactEffects.maxHoles));
+            p.setProperty("bulletHoleMinutes", Double.toString(t3zedballistics.effects.ImpactEffects.holeMinutes));
+            p.setProperty("debrisAmount", Double.toString(t3zedballistics.effects.ImpactEffects.debrisAmount));
+            try (OutputStream out = new FileOutputStream(f)) {
+                p.store(out, "Viewpoint True Ballistics - personal/developer settings. Gameplay values are sandbox options (page ZedBallistics).");
+            }
+        } catch (Throwable t) {
+            Log.error("could not write " + localFile(), t);
+        }
+    }
+
+    private static boolean pb(Properties p, String k, boolean def) {
+        String v = p.getProperty(k);
+        return v == null ? def : Boolean.parseBoolean(v.trim());
+    }
+
+    private static double pd(Properties p, String k, double def, double min, double max) {
+        String v = p.getProperty(k);
+        if (v == null) return def;
+        try { return Math.max(min, Math.min(max, Double.parseDouble(v.trim()))); }
+        catch (NumberFormatException e) { Log.warn("settings.ini: " + k + " is not a number"); return def; }
+    }
+
+    public static String describe() {
+        return "enabled=" + enabled + " iso=" + useInIsoView + " gravity=" + gravityScale + " velocity=" + velocityScale
+            + " drag=" + dragScale + " falloff=" + damageFalloff + " lifetime=" + projectileLifetime
+            + " maxDist=" + maxDistanceMultiplier + "x/cap " + maxDistanceCap + " penetration=" + penetration
+            + " hitLocations=" + hitLocations + " zero=" + zeroDistance + " spread=" + spreadScale
+            + " serverValidation=" + serverValidation + " furniture=" + furnitureCollision;
+    }
+
+    public static String[] sandboxKeys() { return SANDBOX_KEYS.clone(); }
+
+    private BallisticsConfig() {}
+}
