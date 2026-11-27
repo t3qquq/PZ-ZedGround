@@ -1,0 +1,314 @@
+module Base
+{
+
+    /* [ZEDGROUND] Armor Pack - helmets
+       Lv1 Patriot / Lv2 Defender: KATTAJ1 Military Pack (TTAJ1bl4)
+       Lv3 Rys-T: Lynx Pack (TTAJ1bl4). Desert Rys-T and Rys-T camo textures made for ZEDGROUND.
+       Defender AttachmentsProvided removed (needs KATTAJ1 Clothes Core). */
+
+    item Military_Helmet_Patriot-Desert
+	{
+	  DisplayCategory = Accessory,
+	  ItemType = base:clothing,
+	  DisplayName = Military Helmet Patriot (Desert),
+	  ClothingItem = Military_Helmet_Patriot-Desert,
+	  BodyLocation = base:Hat,
+	  BloodLocation = Head,
+	  IconsForTexture = Military_Helmet_Patriot-Desert;Military_Helmet_Patriot-DesertPlain,
+	  CanHaveHoles = false,
+       ScratchDefense = 100,
+	  BiteDefense = 100,
+       BulletDefense = 100,
+       Insulation = 0.2,
+       WindResistance = 0.2,
+	  WaterResistance = 0.2,
+       ChanceToFall = 0,
+	  Weight = 1,
+        ClothingItemExtra = Military_Helmet_Patriot-Desert_NoBelts,
+        ClothingItemExtraOption = NoBelts,
+        clothingExtraSubmenu = WithBelts,
+       WorldStaticModel = Helmet_Patriot_Ground,
+	}
+
+    item Military_Helmet_Patriot-Desert_NoBelts
+	{
+	  DisplayCategory = Accessory,
+	  ItemType = base:clothing,
+	  DisplayName = Military Helmet Patriot (Desert),
+	  ClothingItem = Military_Helmet_Patriot-Desert_NoBelts,
+	  BodyLocation = base:Hat,
+	  BloodLocation = Head,
+	  IconsForTexture = Military_Helmet_Patriot-Desert;Military_Helmet_Patriot-DesertPlain,
+	  CanHaveHoles = false,
+       ScratchDefense = 100,
+	  BiteDefense = 100,
+       BulletDefense = 100,
+       Insulation = 0.2,
+       WindResistance = 0.2,
+	  WaterResistance = 0.2,
+       ChanceToFall = 0,
+	  Weight = 1,
+        ClothingItemExtra = Military_Helmet_Patriot-Desert,
+        ClothingItemExtraOption = WithBelts,
+        clothingExtraSubmenu = NoBelts,
+       WorldStaticModel = Helmet_Patriot_Ground,
+	}
+
+    item Military_Helmet_Patriot-Green
+	{
+	  DisplayCategory = Accessory,
+	  ItemType = base:clothing,
+	  DisplayName = Military Helmet Patriot (Green),
+	  ClothingItem = Military_Helmet_Patriot-Green,
+	  BodyLocation = base:Hat,
+	  BloodLocation = Head,
+	  IconsForTexture = Military_Helmet_Patriot-Green;Military_Helmet_Patriot-GreenPlain,
+	  CanHaveHoles = false,
+       ScratchDefense = 100,
+	  BiteDefense = 100,
+       BulletDefense = 100,
+       Insulation = 0.2,
+       WindResistance = 0.2,
+	  WaterResistance = 0.2,
+       ChanceToFall = 0,
+	  Weight = 1,
+        ClothingItemExtra = Military_Helmet_Patriot-Green_NoBelts,
+        ClothingItemExtraOption = NoBelts,
+        clothingExtraSubmenu = WithBelts,
+       WorldStaticModel = Helmet_Patriot_Ground,
+	}
+
+    item Military_Helmet_Patriot-Green_NoBelts
+	{
+	  DisplayCategory = Accessory,
+	  ItemType = base:clothing,
+	  DisplayName = Military Helmet Patriot (Green),
+	  ClothingItem = Military_Helmet_Patriot-Green_NoBelts,
+	  BodyLocation = base:Hat,
+	  BloodLocation = Head,
+	  IconsForTexture = Military_Helmet_Patriot-Green;Military_Helmet_Patriot-GreenPlain,
+	  CanHaveHoles = false,
+       ScratchDefense = 100,
+	  BiteDefense = 100,
+       BulletDefense = 100,
+       Insulation = 0.2,
+       WindResistance = 0.2,
+	  WaterResistance = 0.2,
+       ChanceToFall = 0,
+	  Weight = 1,
+        ClothingItemExtra = Military_Helmet_Patriot-Green,
+        ClothingItemExtraOption = WithBelts,
+        clothingExtraSubmenu = NoBelts,
+       WorldStaticModel = Helmet_Patriot_Ground,
+	}
+
+    item Military_Helmet_Defender-Desert
+	{
+	  DisplayCategory = Accessory,
+	  ItemType = base:clothing,
+	  DisplayName = Military Helmet Defender (Desert),
+	  ClothingItem = Military_Helmet_Defender-Desert,
+	  BodyLocation = base:Hat,
+	  BloodLocation = Head,
+	  IconsForTexture = Military_Helmet_Defender-Desert;Military_Helmet_Defender-DesertPlain,
+	  CanHaveHoles = false,
+       ScratchDefense = 100,
+	  BiteDefense = 100,
+       BulletDefense = 100,
+       Insulation = 0.2,
+       WindResistance = 0.2,
+	  WaterResistance = 0.2,
+       ChanceToFall = 0,
+	  Weight = 1,
+        ClothingItemExtra = Military_Helmet_Defender-Desert_NoBelts,
+        ClothingItemExtraOption = NoBelts,
+        clothingExtraSubmenu = WithBelts,
+       WorldStaticModel = Helmet_Defender_Ground,
+	}
+
+    item Military_Helmet_Defender-Desert_NoBelts
+	{
+	  DisplayCategory = Accessory,
+	  ItemType = base:clothing,
+	  DisplayName = Military Helmet Defender (Desert),
+	  ClothingItem = Military_Helmet_Defender-Desert_NoBelts,
+	  BodyLocation = base:Hat,
+	  BloodLocation = Head,
+	  IconsForTexture = Military_Helmet_Defender-Desert;Military_Helmet_Defender-DesertPlain,
+	  CanHaveHoles = false,
+       ScratchDefense = 100,
+	  BiteDefense = 100,
+       BulletDefense = 100,
+       Insulation = 0.2,
+       WindResistance = 0.2,
+	  WaterResistance = 0.2,
+       ChanceToFall = 0,
+	  Weight = 1,
+        ClothingItemExtra = Military_Helmet_Defender-Desert,
+        ClothingItemExtraOption = WithBelts,
+        clothingExtraSubmenu = NoBelts,
+       WorldStaticModel = Helmet_Defender_Ground,
+	}
+
+    item Military_Helmet_Defender-Green
+	{
+	  DisplayCategory = Accessory,
+	  ItemType = base:clothing,
+	  DisplayName = Military Helmet Defender (Green),
+	  ClothingItem = Military_Helmet_Defender-Green,
+	  BodyLocation = base:Hat,
+	  BloodLocation = Head,
+	  IconsForTexture = Military_Helmet_Defender-Green;Military_Helmet_Defender-GreenPlain,
+	  CanHaveHoles = false,
+       ScratchDefense = 100,
+	  BiteDefense = 100,
+       BulletDefense = 100,
+       Insulation = 0.2,
+       WindResistance = 0.2,
+	  WaterResistance = 0.2,
+       ChanceToFall = 0,
+	  Weight = 1,
+        ClothingItemExtra = Military_Helmet_Defender-Green_NoBelts,
+        ClothingItemExtraOption = NoBelts,
+        clothingExtraSubmenu = WithBelts,
+       WorldStaticModel = Helmet_Defender_Ground,
+	}
+
+    item Military_Helmet_Defender-Green_NoBelts
+	{
+	  DisplayCategory = Accessory,
+	  ItemType = base:clothing,
+	  DisplayName = Military Helmet Defender (Green),
+	  ClothingItem = Military_Helmet_Defender-Green_NoBelts,
+	  BodyLocation = base:Hat,
+	  BloodLocation = Head,
+	  IconsForTexture = Military_Helmet_Defender-Green;Military_Helmet_Defender-GreenPlain,
+	  CanHaveHoles = false,
+       ScratchDefense = 100,
+	  BiteDefense = 100,
+       BulletDefense = 100,
+       Insulation = 0.2,
+       WindResistance = 0.2,
+	  WaterResistance = 0.2,
+       ChanceToFall = 0,
+	  Weight = 1,
+        ClothingItemExtra = Military_Helmet_Defender-Green,
+        ClothingItemExtraOption = WithBelts,
+        clothingExtraSubmenu = NoBelts,
+       WorldStaticModel = Helmet_Defender_Ground,
+	}
+
+    item Helmet_RysT_Lynx_UP-Green
+    {
+	DisplayCategory = Accessory,
+	ItemType = base:clothing,
+	DisplayName = Rys-T (Lynx),
+	ClothingItem = Helmet_RysT_Lynx_UP-Green,
+	BodyLocation = base:FullHat,
+	BloodLocation = Head,
+	IconsForTexture = Helmet_RysT_Lynx_UP2_Camo;Helmet_RysT_Lynx_UP2,
+	CanHaveHoles = false,
+	ScratchDefense = 100,
+	BiteDefense = 100,
+	BulletDefense = 100,
+	Insulation = 0.35,
+	WindResistance = 0.5,
+	WaterResistance = 0.5,
+	ChanceToFall = 0,
+	Weight = 1,
+        ClothingItemExtra = Helmet_RysT_Lynx_DOWN-Green,
+        ClothingItemExtraOption = FaceShield_DOWN,
+        clothingExtraSubmenu = FaceShield_UP,
+	WorldStaticModel = Helmet_RysT_Lynx_Ground,
+    }
+
+    item Helmet_RysT_Lynx_DOWN-Green
+    {
+	DisplayCategory = Accessory,
+	ItemType = base:clothing,
+	DisplayName = Rys-T (Lynx),
+	ClothingItem = Helmet_RysT_Lynx_DOWN-Green,
+	BodyLocation = base:FullHat,
+	BloodLocation = Head,
+	IconsForTexture = Helmet_RysT_Lynx_DOWN2_Camo;Helmet_RysT_Lynx_DOWN2,
+	CanHaveHoles = false,
+	ScratchDefense = 100,
+	BiteDefense = 100,
+	BulletDefense = 100,
+	Insulation = 0.35,
+	WindResistance = 0.5,
+	WaterResistance = 0.5,
+	ChanceToFall = 0,
+	Weight = 1,
+	ClothingItemExtra = Helmet_RysT_Lynx_UP-Green,
+	ClothingItemExtraOption = FaceShield_UP,
+	clothingExtraSubmenu = FaceShield_DOWN,
+	WorldStaticModel = Helmet_RysT_Lynx_Ground,
+    }
+
+    item Helmet_RysT_Lynx_UP-Desert
+    {
+	DisplayCategory = Accessory,
+	ItemType = base:clothing,
+	DisplayName = Rys-T (Lynx),
+	ClothingItem = Helmet_RysT_Lynx_UP-Desert,
+	BodyLocation = base:FullHat,
+	BloodLocation = Head,
+	IconsForTexture = Helmet_RysT_Lynx_UP3_Camo;Helmet_RysT_Lynx_UP3,
+	CanHaveHoles = false,
+	ScratchDefense = 100,
+	BiteDefense = 100,
+	BulletDefense = 100,
+	Insulation = 0.35,
+	WindResistance = 0.5,
+	WaterResistance = 0.5,
+	ChanceToFall = 0,
+	Weight = 1,
+        ClothingItemExtra = Helmet_RysT_Lynx_DOWN-Desert,
+        ClothingItemExtraOption = FaceShield_DOWN,
+        clothingExtraSubmenu = FaceShield_UP,
+	WorldStaticModel = Helmet_RysT_Lynx_Ground,
+    }
+
+    item Helmet_RysT_Lynx_DOWN-Desert
+    {
+	DisplayCategory = Accessory,
+	ItemType = base:clothing,
+	DisplayName = Rys-T (Lynx),
+	ClothingItem = Helmet_RysT_Lynx_DOWN-Desert,
+	BodyLocation = base:FullHat,
+	BloodLocation = Head,
+	IconsForTexture = Helmet_RysT_Lynx_DOWN3_Camo;Helmet_RysT_Lynx_DOWN3,
+	CanHaveHoles = false,
+	ScratchDefense = 100,
+	BiteDefense = 100,
+	BulletDefense = 100,
+	Insulation = 0.35,
+	WindResistance = 0.5,
+	WaterResistance = 0.5,
+	ChanceToFall = 0,
+	Weight = 1,
+	ClothingItemExtra = Helmet_RysT_Lynx_UP-Desert,
+	ClothingItemExtraOption = FaceShield_UP,
+	clothingExtraSubmenu = FaceShield_DOWN,
+	WorldStaticModel = Helmet_RysT_Lynx_Ground,
+    }
+
+    model Helmet_Patriot_Ground
+    {
+        mesh = WorldItems/Clothing/Helmet_Patriot_Ground,
+        scale = 1,
+    }
+
+    model Helmet_Defender_Ground
+    {
+        mesh = WorldItems/Clothing/Helmet_Defender_Ground,
+        scale = 1,
+    }
+
+    model Helmet_RysT_Lynx_Ground
+    {
+        mesh = WorldItems/Clothing/Helmet_RysT_Lynx_Ground,
+        scale = 1,
+    }
+}
