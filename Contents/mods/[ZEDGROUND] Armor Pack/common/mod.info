@@ -1,5 +1,5 @@
 name=[ZEDGROUND] Armor Pack
 id=t3ZedArmorPack
-description=ZEDGROUND 방어구 팩 - 레벨별 헬멧: 1레벨 Patriot / 2레벨 Defender (KATTAJ1 Military Pack by TTAJ1bl4), 3레벨 Rys-T (Lynx Pack by TTAJ1bl4). 레벨별 방탄조끼: 1레벨 기본 / 2레벨 High Mobility Kit / 3레벨 Assault Kit (Lynx Pack by TTAJ1bl4). 국방색·사막색 × 위장무늬·단색, 사막색과 위장무늬는 ZEDGROUND용 재채색. 두 제작자 모드의 허락을 받아 포함
+description=ZEDGROUND 방어구 팩 - 레벨별 헬멧: 1레벨 Patriot / 2레벨 Defender (KATTAJ1 Military Pack by TTAJ1bl4), 3레벨 Rys-T (Lynx Pack by TTAJ1bl4). 레벨별 방탄조끼: 1레벨 기본 / 2레벨 High Mobility Kit / 3레벨 Assault Kit, 방탄 팔꿈치·무릎 보호대 (Lynx Pack by TTAJ1bl4). 국방색·사막색 × 위장무늬·단색, 사막색과 위장무늬는 ZEDGROUND용 재채색. 두 제작자 모드의 허락을 받아 포함
 versionMin=42.21
-modversion=0.2.0
+modversion=0.3.0

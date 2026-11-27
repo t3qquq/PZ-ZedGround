@@ -5,6 +5,8 @@ local group = BodyLocations.getGroup("Human")
 
 group:getOrCreateLocation(ZedArmor_BodyLocation.TorsoExtraPelvic)
 group:getOrCreateLocation(ZedArmor_BodyLocation.TorsoExtraShoulderPelvic)
+group:getOrCreateLocation(ZedArmor_BodyLocation.Elbows)
+group:getOrCreateLocation(ZedArmor_BodyLocation.Knees)
 
 -- TorsoExtraPelvic
 group:setExclusive(ZedArmor_BodyLocation.TorsoExtraPelvic, ZedArmor_BodyLocation.TorsoExtraShoulderPelvic)
@@ -32,4 +34,10 @@ group:setExclusive(ZedArmor_BodyLocation.TorsoExtraShoulderPelvic, ItemBodyLocat
 group:setExclusive(ZedArmor_BodyLocation.TorsoExtraShoulderPelvic, ItemBodyLocation.TORSO_EXTRA)
 group:setExclusive(ZedArmor_BodyLocation.TorsoExtraShoulderPelvic, ItemBodyLocation.TORSO_EXTRA_VEST_BULLET)
 
-print("[ZedArmor] body locations registered: ZedArmor:TorsoExtraPelvic, ZedArmor:TorsoExtraShoulderPelvic")
+-- Elbows / Knees (same rules as Clothes Core, minus its own LowerArms / LowerLegs locations)
+group:setExclusive(ZedArmor_BodyLocation.Elbows, ItemBodyLocation.ELBOW_LEFT)
+group:setExclusive(ZedArmor_BodyLocation.Elbows, ItemBodyLocation.ELBOW_RIGHT)
+group:setExclusive(ZedArmor_BodyLocation.Knees, ItemBodyLocation.KNEE_LEFT)
+group:setExclusive(ZedArmor_BodyLocation.Knees, ItemBodyLocation.KNEE_RIGHT)
+
+print("[ZedArmor] body locations registered: ZedArmor:TorsoExtraPelvic, ZedArmor:TorsoExtraShoulderPelvic, ZedArmor:Elbows, ZedArmor:Knees")

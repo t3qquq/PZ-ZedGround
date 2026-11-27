@@ -1,0 +1,87 @@
+module Base
+{
+
+    /* [ZEDGROUND] Armor Pack - armored elbow / knee pads
+       ElbowPads_Lynx_Armored / KneePads_Lynx_Armored: Lynx Pack (TTAJ1bl4). Stats unchanged.
+       Desert and camo textures made for ZEDGROUND. Body locations ported from KATTAJ1 Clothes Core as ZedArmor:Elbows / ZedArmor:Knees. */
+
+    item ElbowPads_Lynx_Armored-Green
+    {
+        ItemType = base:clothing,
+        DisplayName = Armored Elbow Pads,
+        ClothingItem = ElbowPads_Lynx_Armored-Green,
+        BodyLocation = ZedArmor:Elbows,
+        BloodLocation = LowerArms,
+        IconsForTexture = ElbowPads_Lynx_Armored2_Camo;ElbowPads_Lynx_Armored2,
+        ScratchDefense = 35,
+        BiteDefense = 25,
+        BulletDefense = 100,
+        Insulation = 0.15,
+        WindResistance = 0.2,
+        Weight = 1,
+        WorldStaticModel = ElbowPads_Lynx_Armored_Ground,
+    }
+
+    item ElbowPads_Lynx_Armored-Desert
+    {
+        ItemType = base:clothing,
+        DisplayName = Armored Elbow Pads,
+        ClothingItem = ElbowPads_Lynx_Armored-Desert,
+        BodyLocation = ZedArmor:Elbows,
+        BloodLocation = LowerArms,
+        IconsForTexture = ElbowPads_Lynx_Armored3_Camo;ElbowPads_Lynx_Armored3,
+        ScratchDefense = 35,
+        BiteDefense = 25,
+        BulletDefense = 100,
+        Insulation = 0.15,
+        WindResistance = 0.2,
+        Weight = 1,
+        WorldStaticModel = ElbowPads_Lynx_Armored_Ground,
+    }
+
+    item KneePads_Lynx_Armored-Green
+    {
+        ItemType = base:clothing,
+        DisplayName = Armored Knee Pads,
+        ClothingItem = KneePads_Lynx_Armored-Green,
+        BodyLocation = ZedArmor:Knees,
+        BloodLocation = LowerLegs,
+        IconsForTexture = KneePads_Lynx_Armored2_Camo;KneePads_Lynx_Armored2,
+        ScratchDefense = 35,
+        BiteDefense = 25,
+        BulletDefense = 100,
+        Insulation = 0.15,
+        WindResistance = 0.2,
+        Weight = 1,
+        WorldStaticModel = KneePads_Lynx_Armored_Ground,
+    }
+
+    item KneePads_Lynx_Armored-Desert
+    {
+        ItemType = base:clothing,
+        DisplayName = Armored Knee Pads,
+        ClothingItem = KneePads_Lynx_Armored-Desert,
+        BodyLocation = ZedArmor:Knees,
+        BloodLocation = LowerLegs,
+        IconsForTexture = KneePads_Lynx_Armored3_Camo;KneePads_Lynx_Armored3,
+        ScratchDefense = 35,
+        BiteDefense = 25,
+        BulletDefense = 100,
+        Insulation = 0.15,
+        WindResistance = 0.2,
+        Weight = 1,
+        WorldStaticModel = KneePads_Lynx_Armored_Ground,
+    }
+
+    model ElbowPads_Lynx_Armored_Ground
+    {
+        mesh = WorldItems/Clothing/ElbowPads_Lynx_Armored_Ground,
+        scale = 1,
+    }
+
+    model KneePads_Lynx_Armored_Ground
+    {
+        mesh = WorldItems/Clothing/KneePads_Lynx_Armored_Ground,
+        scale = 1,
+    }
+}

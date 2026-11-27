@@ -1,6 +1,8 @@
--- [ZEDGROUND] Armor Pack - body locations for the Lv2 / Lv3 vests
+-- [ZEDGROUND] Armor Pack - body locations for the Lv2 / Lv3 vests and the armored elbow / knee pads
 -- Ported from KATTAJ1 Clothes Core (TorsoExtraPelvic / TorsoExtraShoulderPelvic) under our own namespace,
 -- so the pack works without Clothes Core and does not collide with it.
 ZedArmor_BodyLocation = {}
 ZedArmor_BodyLocation.TorsoExtraPelvic         = ItemBodyLocation.register("ZedArmor:TorsoExtraPelvic")
 ZedArmor_BodyLocation.TorsoExtraShoulderPelvic = ItemBodyLocation.register("ZedArmor:TorsoExtraShoulderPelvic")
+ZedArmor_BodyLocation.Elbows                   = ItemBodyLocation.register("ZedArmor:Elbows")
+ZedArmor_BodyLocation.Knees                    = ItemBodyLocation.register("ZedArmor:Knees")

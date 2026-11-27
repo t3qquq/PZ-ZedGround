@@ -79,4 +79,23 @@
         <guid>9af87fd2-05c7-5e2d-a022-ca0cc742e85b</guid>
     </files>
 
+<!-- [ZEDGROUND] Armor Pack pads -->
+
+    <files>
+        <path>media/clothing/clothingItems/ElbowPads_Lynx_Armored-Green.xml</path>
+        <guid>5142d64e-9625-4530-b8f9-67353f448312</guid>
+    </files>
+    <files>
+        <path>media/clothing/clothingItems/ElbowPads_Lynx_Armored-Desert.xml</path>
+        <guid>868152ca-90f8-532b-b3ce-a1d429874a15</guid>
+    </files>
+    <files>
+        <path>media/clothing/clothingItems/KneePads_Lynx_Armored-Green.xml</path>
+        <guid>76a7a237-e524-4293-bf55-c623394f3b91</guid>
+    </files>
+    <files>
+        <path>media/clothing/clothingItems/KneePads_Lynx_Armored-Desert.xml</path>
+        <guid>84f2dd48-48dc-55db-9301-9bfb418cbfc6</guid>
+    </files>
+
 </fileGuidTable>
