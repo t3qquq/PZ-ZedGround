@@ -10,7 +10,7 @@ module Base
 	{
 	  DisplayCategory = Accessory,
 	  ItemType = base:clothing,
-	  DisplayName = Military Helmet Patriot (Desert),
+	  DisplayName = Ballistic Helmet Lv.1,
 	  ClothingItem = Military_Helmet_Patriot-Desert,
 	  BodyLocation = base:Hat,
 	  BloodLocation = Head,
@@ -34,7 +34,7 @@ module Base
 	{
 	  DisplayCategory = Accessory,
 	  ItemType = base:clothing,
-	  DisplayName = Military Helmet Patriot (Desert),
+	  DisplayName = Ballistic Helmet Lv.1,
 	  ClothingItem = Military_Helmet_Patriot-Desert_NoBelts,
 	  BodyLocation = base:Hat,
 	  BloodLocation = Head,
@@ -58,7 +58,7 @@ module Base
 	{
 	  DisplayCategory = Accessory,
 	  ItemType = base:clothing,
-	  DisplayName = Military Helmet Patriot (Green),
+	  DisplayName = Ballistic Helmet Lv.1,
 	  ClothingItem = Military_Helmet_Patriot-Green,
 	  BodyLocation = base:Hat,
 	  BloodLocation = Head,
@@ -82,7 +82,7 @@ module Base
 	{
 	  DisplayCategory = Accessory,
 	  ItemType = base:clothing,
-	  DisplayName = Military Helmet Patriot (Green),
+	  DisplayName = Ballistic Helmet Lv.1,
 	  ClothingItem = Military_Helmet_Patriot-Green_NoBelts,
 	  BodyLocation = base:Hat,
 	  BloodLocation = Head,
@@ -106,7 +106,7 @@ module Base
 	{
 	  DisplayCategory = Accessory,
 	  ItemType = base:clothing,
-	  DisplayName = Military Helmet Defender (Desert),
+	  DisplayName = Ballistic Helmet Lv.2,
 	  ClothingItem = Military_Helmet_Defender-Desert,
 	  BodyLocation = base:Hat,
 	  BloodLocation = Head,
@@ -130,7 +130,7 @@ module Base
 	{
 	  DisplayCategory = Accessory,
 	  ItemType = base:clothing,
-	  DisplayName = Military Helmet Defender (Desert),
+	  DisplayName = Ballistic Helmet Lv.2,
 	  ClothingItem = Military_Helmet_Defender-Desert_NoBelts,
 	  BodyLocation = base:Hat,
 	  BloodLocation = Head,
@@ -154,7 +154,7 @@ module Base
 	{
 	  DisplayCategory = Accessory,
 	  ItemType = base:clothing,
-	  DisplayName = Military Helmet Defender (Green),
+	  DisplayName = Ballistic Helmet Lv.2,
 	  ClothingItem = Military_Helmet_Defender-Green,
 	  BodyLocation = base:Hat,
 	  BloodLocation = Head,
@@ -178,7 +178,7 @@ module Base
 	{
 	  DisplayCategory = Accessory,
 	  ItemType = base:clothing,
-	  DisplayName = Military Helmet Defender (Green),
+	  DisplayName = Ballistic Helmet Lv.2,
 	  ClothingItem = Military_Helmet_Defender-Green_NoBelts,
 	  BodyLocation = base:Hat,
 	  BloodLocation = Head,
@@ -202,7 +202,7 @@ module Base
     {
 	DisplayCategory = Accessory,
 	ItemType = base:clothing,
-	DisplayName = Rys-T (Lynx),
+	DisplayName = Ballistic Helmet Lv.3,
 	ClothingItem = Helmet_RysT_Lynx_UP-Green,
 	BodyLocation = base:FullHat,
 	BloodLocation = Head,
@@ -226,7 +226,7 @@ module Base
     {
 	DisplayCategory = Accessory,
 	ItemType = base:clothing,
-	DisplayName = Rys-T (Lynx),
+	DisplayName = Ballistic Helmet Lv.3,
 	ClothingItem = Helmet_RysT_Lynx_DOWN-Green,
 	BodyLocation = base:FullHat,
 	BloodLocation = Head,
@@ -250,7 +250,7 @@ module Base
     {
 	DisplayCategory = Accessory,
 	ItemType = base:clothing,
-	DisplayName = Rys-T (Lynx),
+	DisplayName = Ballistic Helmet Lv.3,
 	ClothingItem = Helmet_RysT_Lynx_UP-Desert,
 	BodyLocation = base:FullHat,
 	BloodLocation = Head,
@@ -274,7 +274,7 @@ module Base
     {
 	DisplayCategory = Accessory,
 	ItemType = base:clothing,
-	DisplayName = Rys-T (Lynx),
+	DisplayName = Ballistic Helmet Lv.3,
 	ClothingItem = Helmet_RysT_Lynx_DOWN-Desert,
 	BodyLocation = base:FullHat,
 	BloodLocation = Head,

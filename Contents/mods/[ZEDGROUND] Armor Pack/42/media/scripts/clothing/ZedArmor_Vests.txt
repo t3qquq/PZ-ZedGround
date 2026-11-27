@@ -1,0 +1,150 @@
+module Base
+{
+
+    /* [ZEDGROUND] Armor Pack - vests
+       Lv1 BulletproofVest_Lynx / Lv2 HighMobilityKit / Lv3 AssaultKit: Lynx Pack (TTAJ1bl4).
+       Desert and camo textures made for ZEDGROUND. Run/Combat speed unified to 0.98.
+       Lv2/Lv3 body locations ported from KATTAJ1 Clothes Core as ZedArmor:*. */
+
+    item BulletproofVest_Lynx-Green
+    {
+        DisplayCategory = BulletproofVest,
+        ItemType = base:clothing,
+        DisplayName = Body Armor Lv.1,
+        ClothingItem = BulletproofVest_Lynx-Green,
+        BodyLocation = base:TorsoExtraVestBullet,
+        IconsForTexture = BulletproofVest_Lynx2_Camo;BulletproofVest_Lynx2,
+        BloodLocation = ShirtNoSleeves,
+        RunSpeedModifier = 0.98,
+        CombatSpeedModifier = 0.98,
+        ScratchDefense = 80,
+        BiteDefense = 60,
+        BulletDefense = 100,
+        Insulation = 0.6,
+        WindResistance = 0.35,
+        Weight = 4,
+        WorldStaticModel = BulletproofVest_Lynx_Ground,
+    }
+
+    item BulletproofVest_Lynx-Desert
+    {
+        DisplayCategory = BulletproofVest,
+        ItemType = base:clothing,
+        DisplayName = Body Armor Lv.1,
+        ClothingItem = BulletproofVest_Lynx-Desert,
+        BodyLocation = base:TorsoExtraVestBullet,
+        IconsForTexture = BulletproofVest_Lynx3_Camo;BulletproofVest_Lynx3,
+        BloodLocation = ShirtNoSleeves,
+        RunSpeedModifier = 0.98,
+        CombatSpeedModifier = 0.98,
+        ScratchDefense = 80,
+        BiteDefense = 60,
+        BulletDefense = 100,
+        Insulation = 0.6,
+        WindResistance = 0.35,
+        Weight = 4,
+        WorldStaticModel = BulletproofVest_Lynx_Ground,
+    }
+
+    item BulletproofVest_Lynx_HighMobilityKit-Green
+    {
+        DisplayCategory = BulletproofVest,
+        ItemType = base:clothing,
+        DisplayName = Body Armor Lv.2,
+        ClothingItem = BulletproofVest_Lynx_HighMobilityKit-Green,
+        BodyLocation = ZedArmor:TorsoExtraPelvic,
+        IconsForTexture = BulletproofVest_Lynx_HighMobilityKit2_Camo;BulletproofVest_Lynx_HighMobilityKit2,
+        BloodLocation = ShirtNoSleeves; Neck; Groin,
+        RunSpeedModifier = 0.98,
+        CombatSpeedModifier = 0.98,
+        ScratchDefense = 80,
+        BiteDefense = 60,
+        BulletDefense = 100,
+        Insulation = 0.6,
+        WindResistance = 0.35,
+        Weight = 6,
+        NeckProtectionModifier = 0.80,
+        WorldStaticModel = BulletproofVest_Lynx_HighMobilityKit_Ground,
+    }
+
+    item BulletproofVest_Lynx_HighMobilityKit-Desert
+    {
+        DisplayCategory = BulletproofVest,
+        ItemType = base:clothing,
+        DisplayName = Body Armor Lv.2,
+        ClothingItem = BulletproofVest_Lynx_HighMobilityKit-Desert,
+        BodyLocation = ZedArmor:TorsoExtraPelvic,
+        IconsForTexture = BulletproofVest_Lynx_HighMobilityKit3_Camo;BulletproofVest_Lynx_HighMobilityKit3,
+        BloodLocation = ShirtNoSleeves; Neck; Groin,
+        RunSpeedModifier = 0.98,
+        CombatSpeedModifier = 0.98,
+        ScratchDefense = 80,
+        BiteDefense = 60,
+        BulletDefense = 100,
+        Insulation = 0.6,
+        WindResistance = 0.35,
+        Weight = 6,
+        NeckProtectionModifier = 0.80,
+        WorldStaticModel = BulletproofVest_Lynx_HighMobilityKit_Ground,
+    }
+
+    item BulletproofVest_Lynx_AssaultKit-Green
+    {
+        DisplayCategory = BulletproofVest,
+        ItemType = base:clothing,
+        DisplayName = Body Armor Lv.3,
+        ClothingItem = BulletproofVest_Lynx_AssaultKit-Green,
+        BodyLocation = ZedArmor:TorsoExtraShoulderPelvic,
+        IconsForTexture = BulletproofVest_Lynx_AssaultKit2_Camo;BulletproofVest_Lynx_AssaultKit2,
+        BloodLocation = Shirt; Neck; Groin,
+        RunSpeedModifier = 0.98,
+        CombatSpeedModifier = 0.98,
+        ScratchDefense = 80,
+        BiteDefense = 60,
+        BulletDefense = 100,
+        Insulation = 0.6,
+        WindResistance = 0.35,
+        Weight = 7.5,
+        NeckProtectionModifier = 0.80,
+        WorldStaticModel = BulletproofVest_Lynx_AssaultKit_Ground,
+    }
+
+    item BulletproofVest_Lynx_AssaultKit-Desert
+    {
+        DisplayCategory = BulletproofVest,
+        ItemType = base:clothing,
+        DisplayName = Body Armor Lv.3,
+        ClothingItem = BulletproofVest_Lynx_AssaultKit-Desert,
+        BodyLocation = ZedArmor:TorsoExtraShoulderPelvic,
+        IconsForTexture = BulletproofVest_Lynx_AssaultKit3_Camo;BulletproofVest_Lynx_AssaultKit3,
+        BloodLocation = Shirt; Neck; Groin,
+        RunSpeedModifier = 0.98,
+        CombatSpeedModifier = 0.98,
+        ScratchDefense = 80,
+        BiteDefense = 60,
+        BulletDefense = 100,
+        Insulation = 0.6,
+        WindResistance = 0.35,
+        Weight = 7.5,
+        NeckProtectionModifier = 0.80,
+        WorldStaticModel = BulletproofVest_Lynx_AssaultKit_Ground,
+    }
+
+    model BulletproofVest_Lynx_Ground
+    {
+        mesh = WorldItems/Clothing/BulletproofVest_Lynx_Ground,
+        scale = 1,
+    }
+
+    model BulletproofVest_Lynx_HighMobilityKit_Ground
+    {
+        mesh = WorldItems/Clothing/BulletproofVest_Lynx_HighMobilityKit_Ground,
+        scale = 1,
+    }
+
+    model BulletproofVest_Lynx_AssaultKit_Ground
+    {
+        mesh = WorldItems/Clothing/BulletproofVest_Lynx_AssaultKit_Ground,
+        scale = 1,
+    }
+}

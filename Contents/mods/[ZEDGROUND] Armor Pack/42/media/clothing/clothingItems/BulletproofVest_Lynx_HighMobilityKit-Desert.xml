@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<clothingItem>
+	<m_MaleModel>Skinned\Armor\M_BulletproofVest_Lynx_HighMobilityKit</m_MaleModel>
+	<m_FemaleModel>Skinned\Armor\F_BulletproofVest_Lynx_HighMobilityKit</m_FemaleModel>
+	<m_GUID>581fc3eb-07f7-579a-9bb2-2e891d2b6d0d</m_GUID>
+	<m_Static>false</m_Static>
+	<m_AllowRandomTint>false</m_AllowRandomTint>
+	<m_AttachBone></m_AttachBone>
+	<textureChoices>Clothes\Lynx\BulletproofVest\BulletproofVest_Lynx3_Camo</textureChoices>
+	<textureChoices>Clothes\Lynx\BulletproofVest\BulletproofVest_Lynx3</textureChoices>
+</clothingItem>

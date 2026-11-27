@@ -52,4 +52,31 @@
         <guid>6a4df770-16b7-5f71-a37f-fdf636fd0aeb</guid>
     </files>
 
+<!-- [ZEDGROUND] Armor Pack vests -->
+
+    <files>
+        <path>media/clothing/clothingItems/BulletproofVest_Lynx-Green.xml</path>
+        <guid>6f085eb7-3b7e-48ec-8303-5fe644467b5a</guid>
+    </files>
+    <files>
+        <path>media/clothing/clothingItems/BulletproofVest_Lynx-Desert.xml</path>
+        <guid>d12e9a93-4a19-5f20-8248-fd2e8beb743b</guid>
+    </files>
+    <files>
+        <path>media/clothing/clothingItems/BulletproofVest_Lynx_HighMobilityKit-Green.xml</path>
+        <guid>c1656b82-3664-45b2-b423-a743cc824d59</guid>
+    </files>
+    <files>
+        <path>media/clothing/clothingItems/BulletproofVest_Lynx_HighMobilityKit-Desert.xml</path>
+        <guid>581fc3eb-07f7-579a-9bb2-2e891d2b6d0d</guid>
+    </files>
+    <files>
+        <path>media/clothing/clothingItems/BulletproofVest_Lynx_AssaultKit-Green.xml</path>
+        <guid>469b6de9-74c8-4c02-96b3-618230979400</guid>
+    </files>
+    <files>
+        <path>media/clothing/clothingItems/BulletproofVest_Lynx_AssaultKit-Desert.xml</path>
+        <guid>9af87fd2-05c7-5e2d-a022-ca0cc742e85b</guid>
+    </files>
+
 </fileGuidTable>
