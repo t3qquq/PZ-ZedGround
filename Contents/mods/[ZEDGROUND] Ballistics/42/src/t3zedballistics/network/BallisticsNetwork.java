@@ -159,7 +159,7 @@ public final class BallisticsNetwork {
             INetworkPacket.send(PacketTypes.PacketType.PlayerHit, g.shooter, g.weapon, lists, g.tracers);
             count(1);
             shotsSent++;
-            if (BallisticsConfig.debugNetwork) {
+            if (BallisticsConfig.logNetwork()) {
                 Log.info("net shot #" + g.seq + " targets=" + g.targetCount + " tracers=" + g.tracers.size()
                     + " delay=" + String.format("%.0fms", (System.nanoTime() - g.firedNanos) / 1e6));
             }

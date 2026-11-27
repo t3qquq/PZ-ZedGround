@@ -29,5 +29,11 @@
   "Sandbox_ZedBallistics_FurnitureCollision": "Furniture collision",
   "Sandbox_ZedBallistics_FurnitureCollision_tooltip": "Solid furniture (up to 1.9 m) and counters/tables (up to 0.9 m) stop rounds.",
   "Sandbox_ZedBallistics_ServerValidation": "Server hit validation",
-  "Sandbox_ZedBallistics_ServerValidation_tooltip": "Server-side line-of-fire and damage checks for firearm hits."
+  "Sandbox_ZedBallistics_ServerValidation_tooltip": "Server-side line-of-fire and damage checks for firearm hits.",
+  "Sandbox_ZedBallistics_OverflowDamage": "Damage overflow",
+  "Sandbox_ZedBallistics_OverflowDamage_tooltip": "A body part's health stops at 0, so in vanilla more rounds into an emptied part do no damage. On = the damage the part cannot take still comes off the overall health (bullet wounds only).",
+  "Sandbox_ZedBallistics_HeadDamageShare": "Head damage share",
+  "Sandbox_ZedBallistics_HeadDamageShare_tooltip": "How much of a head wound counts against the overall health. Vanilla is 0.6 (less than the neck's 0.7). 1.0 = a head wound counts in full.",
+  "Sandbox_ZedBallistics_DebugLog": "Debug log",
+  "Sandbox_ZedBallistics_DebugLog_tooltip": "Writes every shot, wound (body part, damage, overflow, health before and after) and hit packet to console.txt / server-console.txt. Turn off on a busy server."
 }

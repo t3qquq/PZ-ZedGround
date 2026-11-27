@@ -248,7 +248,7 @@ public final class BallisticsManager {
             }
             if (sol.muzzleBlocked) BallisticsDebug.point(sol.blockPoint, 0.25, 1f, 0.5f, 0f);
         }
-        if (BallisticsConfig.verbose) {
+        if (BallisticsConfig.logVerbose()) {
             Log.info(String.format("Shot #%d weapon=%s %s v0=%.0fm/s g=%.2f drag=%.4f pellets=%d sigma=%.2fmrad zero=%.2fmrad "
                     + "origin=%s(%s) aim=%s%s dir=%s range=%.0fm%s",
                 grp.seq, w.getFullType(), prof.category, v0, g, k, pellets, sol.sigma * 1000, sol.zeroAngle * 1000,
@@ -461,7 +461,7 @@ public final class BallisticsManager {
                 int r = DamageBridge.hitCharacter(p.group, c, res.bodyPart, res.bodyPartType, ratio, pierced, p, res);
                 tracer(p, null);
                 debugImpact(p, 1f, 0.15f, 0.15f);
-                if (BallisticsConfig.verbose || BallisticsConfig.debugImpacts) {
+                if (BallisticsConfig.logVerbose() || BallisticsConfig.debugImpacts) {
                     Log.info(String.format("Shot #%d pellet %d hit %s#%d %s at %.1fm after %.3fs, %.0fm/s %.0fJ%s",
                         p.shotSeq, p.pellet, c.getClass().getSimpleName(), c.getID(), HitLocation.of(res.bodyPart),
                         p.origin.dist(res.point), p.age, p.speed(), p.energy(), r == DamageBridge.ABSORBED ? " (no damage)" : ""));
@@ -494,7 +494,7 @@ public final class BallisticsManager {
         IsoGridSquare sq = collision.world.square(tx, ty, tz);
         tracer(p, sq);
         debugImpact(p, 1f, 0.15f, 0.15f);
-        if (BallisticsConfig.verbose || BallisticsConfig.debugImpacts) {
+        if (BallisticsConfig.logVerbose() || BallisticsConfig.debugImpacts) {
             Log.info(String.format("Shot #%d pellet %d hit world (%s) at %s, %.1fm after %.3fs",
                 p.shotSeq, p.pellet, worldKind(kind), point, p.origin.dist(point), p.age));
         }
@@ -575,7 +575,7 @@ public final class BallisticsManager {
     private void expire(BallisticProjectile p) {
         expired++;
         tracer(p, null);
-        if (BallisticsConfig.verbose) {
+        if (BallisticsConfig.logVerbose()) {
             Log.info(String.format("Shot #%d pellet %d spent at %s after %.1fm / %.3fs (%.0fm/s)",
                 p.shotSeq, p.pellet, p.position, p.traveled, p.age, p.speed()));
         }
@@ -595,7 +595,7 @@ public final class BallisticsManager {
             p.velocity.u / vl, vl, p.massGrams, p.group.shooter);
         if (BallisticsDebug.enabled()) p.recordTrail();
         debugImpact(p, 0.3f, 1f, 0.3f);
-        if (BallisticsConfig.verbose || BallisticsConfig.debugImpacts) {
+        if (BallisticsConfig.logVerbose() || BallisticsConfig.debugImpacts) {
             Log.info(String.format("Shot #%d pellet %d hit an object at %s, %.1fm after %.3fs, %.0fm/s%s",
                 p.shotSeq, p.pellet, p.position, p.origin.dist(p.position), p.age, vl, stop ? "" : " (flies on)"));
         }

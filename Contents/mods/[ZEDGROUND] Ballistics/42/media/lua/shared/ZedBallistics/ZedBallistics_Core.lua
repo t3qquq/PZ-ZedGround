@@ -13,7 +13,7 @@
 -- cone half-angle, degrees), baseSpread (mrad), tracer (true/false), category (text).
 
 ZedBallistics = ZedBallistics or {}
-ZedBallistics.version = "1.4.6-zg2"
+ZedBallistics.version = "1.4.6-zg3"
 
 -- Java bridge. The Java part is exposed by ZombieBuddy as the table ZedBallisticsJ; it is nil when the
 -- Java part is not running (ZombieBuddy missing, or the jar was not approved). The ZGB_* globals below

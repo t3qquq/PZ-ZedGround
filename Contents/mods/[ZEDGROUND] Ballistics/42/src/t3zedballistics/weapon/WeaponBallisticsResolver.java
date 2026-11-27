@@ -71,7 +71,7 @@ public final class WeaponBallisticsResolver {
         if (wo != null) p = wo.applyTo(p);
 
         cache.put(cacheKey, p);
-        if (BallisticsConfig.verbose) Log.info("profile " + type + " [" + ammo + "] -> " + p);
+        if (BallisticsConfig.logVerbose()) Log.info("profile " + type + " [" + ammo + "] -> " + p);
         return p;
     }
 

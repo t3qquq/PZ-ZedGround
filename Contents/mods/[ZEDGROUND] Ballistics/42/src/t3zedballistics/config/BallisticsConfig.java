@@ -39,6 +39,12 @@ public final class BallisticsConfig {
     public static volatile double spreadScale = 1.0;
     public static volatile boolean serverValidation = true;
     public static volatile boolean furnitureCollision = true;
+    /** Bullet damage an emptied body part cannot take any more still counts (combat.DamageOverflow). */
+    public static volatile boolean overflowDamage = true;
+    /** Share of a head wound that counts against the overall health (vanilla 0.6). */
+    public static volatile double headDamageShare = 1.0;
+    /** Server-wide switch for the shot / wound / network log lines (same output as the verbose + network switches). */
+    public static volatile boolean debugLog = true;
 
     // ---- local developer switches ----
     public static volatile boolean debugTrajectories = false;
@@ -60,7 +66,8 @@ public final class BallisticsConfig {
     private static final String[] SANDBOX_KEYS = {
         "Enabled", "UseInIsoView", "GravityScale", "VelocityScale", "DragScale", "DamageFalloff",
         "ProjectileLifetime", "MaxDistanceMultiplier", "MaxDistanceCap", "Penetration", "HitLocations",
-        "ZeroDistance", "SpreadScale", "ServerValidation", "FurnitureCollision"
+        "ZeroDistance", "SpreadScale", "ServerValidation", "FurnitureCollision", "OverflowDamage",
+        "HeadDamageShare", "DebugLog"
     };
     private static boolean sandboxWarned;
 
@@ -84,10 +91,19 @@ public final class BallisticsConfig {
             spreadScale = num(so, "SpreadScale", spreadScale, 0, 10);
             serverValidation = bool(so, "ServerValidation", serverValidation);
             furnitureCollision = bool(so, "FurnitureCollision", furnitureCollision);
+            overflowDamage = bool(so, "OverflowDamage", overflowDamage);
+            headDamageShare = num(so, "HeadDamageShare", headDamageShare, 0.1, 2);
+            debugLog = bool(so, "DebugLog", debugLog);
         } catch (Throwable t) {
             if (!sandboxWarned) { sandboxWarned = true; Log.error("reading sandbox options failed; defaults stay in use", t); }
         }
     }
+
+    /** Shot / wound log lines: the local verbose switch or the sandbox DebugLog option. */
+    public static boolean logVerbose() { return verbose || debugLog; }
+
+    /** Network log lines: the local network switch or the sandbox DebugLog option. */
+    public static boolean logNetwork() { return debugNetwork || debugLog; }
 
     private static Object raw(SandboxOptions so, String key) {
         SandboxOptions.SandboxOption o = so.getOptionByName("ZedBallistics." + key);
@@ -180,7 +196,8 @@ public final class BallisticsConfig {
             + " drag=" + dragScale + " falloff=" + damageFalloff + " lifetime=" + projectileLifetime
             + " maxDist=" + maxDistanceMultiplier + "x/cap " + maxDistanceCap + " penetration=" + penetration
             + " hitLocations=" + hitLocations + " zero=" + zeroDistance + " spread=" + spreadScale
-            + " serverValidation=" + serverValidation + " furniture=" + furnitureCollision;
+            + " serverValidation=" + serverValidation + " furniture=" + furnitureCollision
+            + " overflow=" + overflowDamage + " headShare=" + headDamageShare + " debugLog=" + debugLog;
     }
 
     public static String[] sandboxKeys() { return SANDBOX_KEYS.clone(); }

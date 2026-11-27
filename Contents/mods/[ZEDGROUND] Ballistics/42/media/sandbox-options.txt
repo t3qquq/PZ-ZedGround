@@ -137,3 +137,29 @@ option ZedBallistics.ServerValidation
     page = ZedBallistics,
     translation = ZedBallistics_ServerValidation,
 }
+
+option ZedBallistics.OverflowDamage
+{
+    type = boolean,
+    default = true,
+    page = ZedBallistics,
+    translation = ZedBallistics_OverflowDamage,
+}
+
+option ZedBallistics.HeadDamageShare
+{
+    type = double,
+    min = 0.1,
+    max = 2.0,
+    default = 1.0,
+    page = ZedBallistics,
+    translation = ZedBallistics_HeadDamageShare,
+}
+
+option ZedBallistics.DebugLog
+{
+    type = boolean,
+    default = true,
+    page = ZedBallistics,
+    translation = ZedBallistics_DebugLog,
+}

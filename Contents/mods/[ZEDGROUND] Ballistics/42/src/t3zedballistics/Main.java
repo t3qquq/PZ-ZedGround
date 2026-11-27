@@ -43,6 +43,7 @@ public class Main {
         check("zombie.network.packets.hit.PlayerHitPlayerPacket", "isConsistent", "Server PvP-hit validation", false);
         check("zombie.characters.BodyDamage.BodyDamage", "DamageFromWeapon", "Exact player wound location", false);
         check("zombie.network.fields.hit.Hit", "process", "Exact player wound location (multiplayer)", false);
+        check("zombie.characters.BodyDamage.BodyDamage", "applyDamageFromWeapon", "Bullet damage overflow", false);
         check("zombie.network.fields.hit.Hit", "roll", "Head hits of projectiles (multiplayer)", false);
         check("zombie.network.packets.hit.PlayerHitPacket", "processServer", "Server keeps projectile hits (hit packet)", false);
         check("zombie.CombatManager", "isHitRolledByClient", "Server keeps projectile hits (players, animals)", false);

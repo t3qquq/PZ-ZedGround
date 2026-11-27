@@ -29,5 +29,11 @@
   "Sandbox_ZedBallistics_FurnitureCollision": "가구 충돌",
   "Sandbox_ZedBallistics_FurnitureCollision_tooltip": "단단한 가구(1.9m 이하)와 조리대·탁자(0.9m 이하)가 탄환을 막습니다.",
   "Sandbox_ZedBallistics_ServerValidation": "서버 명중 검증",
-  "Sandbox_ZedBallistics_ServerValidation_tooltip": "총기 명중에 대해 서버가 사선(벽 관통 여부)과 데미지를 검사합니다."
+  "Sandbox_ZedBallistics_ServerValidation_tooltip": "총기 명중에 대해 서버가 사선(벽 관통 여부)과 데미지를 검사합니다.",
+  "Sandbox_ZedBallistics_OverflowDamage": "피해 이월",
+  "Sandbox_ZedBallistics_OverflowDamage_tooltip": "부위 체력은 0에서 멈춰서, 바닐라에선 체력이 다 깎인 부위에 더 쏴도 피해가 없습니다. 켜면 그 부위가 받지 못한 피해를 전체 체력에서 깎습니다 (총상만).",
+  "Sandbox_ZedBallistics_HeadDamageShare": "머리 피해 반영 비율",
+  "Sandbox_ZedBallistics_HeadDamageShare_tooltip": "머리 상처가 전체 체력에 반영되는 비율입니다. 바닐라는 0.6 (목 0.7보다 낮음). 1.0이면 머리 피해가 그대로 반영됩니다.",
+  "Sandbox_ZedBallistics_DebugLog": "디버그 로그",
+  "Sandbox_ZedBallistics_DebugLog_tooltip": "사격, 상처(부위·피해·이월량·전후 체력), 명중 패킷을 console.txt / server-console.txt에 기록합니다. 사람이 많은 서버에서는 끄세요."
 }

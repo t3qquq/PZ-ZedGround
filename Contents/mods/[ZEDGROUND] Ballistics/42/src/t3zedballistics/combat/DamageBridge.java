@@ -66,7 +66,7 @@ public final class DamageBridge {
         CombatManager cm = CombatManager.getInstance();
 
         if (!target.isAnimal() && !CombatManager.checkPVP(owner, target, false)) {
-            if (BallisticsConfig.verbose) Log.info("hit on " + target + " blocked by PvP rules");
+            if (BallisticsConfig.logVerbose()) Log.info("hit on " + target + " blocked by PvP rules");
             return ABSORBED;
         }
         int maxHits = Math.max(1, weapon.getMaxHitCount());
@@ -217,7 +217,7 @@ public final class DamageBridge {
             impact.killed = target.isDead();
             ImpactEvents.fire(impact, ImpactEvents.PHASE_APPLIED);
         }
-        if (BallisticsConfig.verbose) {
+        if (BallisticsConfig.logVerbose()) {
             Log.info("hit " + target.getClass().getSimpleName() + "#" + target.getID() + " part=" + HitLocation.partName(part)
                 + (targeted ? "" : " (vanilla location)") + (bodyPartType >= 0 ? " wound=" + BodyPartType.FromIndex(bodyPartType) : "") + " dmg=" + split + " applied=" + hitDamage + " energy=" + String.format("%.2f", energyRatio));
         }

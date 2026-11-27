@@ -9,6 +9,8 @@ import me.zed_0xff.zombie_buddy.Patch;
  *   zombie.characters.BodyDamage.BodyDamage.DamageFromWeapon(HandWeapon, int)   - -1 = random part
  *   zombie.network.fields.hit.Hit.process(IsoGameCharacter, IsoGameCharacter, HandWeapon)
  *       - applies one hit of a packet on the server (also matches the two-argument helper it calls last)
+ *   zombie.characters.BodyDamage.BodyDamage.applyDamageFromWeapon(int, float, int, float)
+ *       - part, damage, damage type (6 = bullet), pain; bullet damage overflow (combat.DamageOverflow)
  *   zombie.network.fields.hit.Hit.roll(IsoGameCharacter, IsoGameCharacter, HandWeapon)
  *       - the server recomputes the hit's head value here (42.21: WeaponHit.process / isHitHead / isHitLegs)
  */
@@ -19,6 +21,20 @@ public final class WoundPatches {
         @Patch.OnEnter
         public static void enter(@Patch.This Object self, @Patch.Argument(value = 1, readOnly = false) int part) {
             part = Hooks.woundPart(self, part);
+        }
+    }
+
+    @Patch(className = "zombie.characters.BodyDamage.BodyDamage", methodName = "applyDamageFromWeapon")
+    public static class ApplyDamageFromWeapon {
+        @Patch.OnEnter
+        public static void enter(@Patch.This Object self, @Patch.Argument(0) int part, @Patch.Argument(1) float damage,
+                                 @Patch.Argument(2) int damageType) {
+            Hooks.overflowEnter(self, part, damage, damageType);
+        }
+
+        @Patch.OnExit(onThrowable = Throwable.class)
+        public static void exit(@Patch.This Object self) {
+            Hooks.overflowExit(self);
         }
     }
 

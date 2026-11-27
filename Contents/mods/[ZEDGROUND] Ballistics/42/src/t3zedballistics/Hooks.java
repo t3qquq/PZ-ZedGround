@@ -150,6 +150,24 @@ public final class Hooks {
         }
     }
 
+    // ---------------------------------------------------------------- bullet damage overflow (players)
+
+    public static void overflowEnter(Object bodyDamage, int part, float damage, int damageType) {
+        try {
+            t3zedballistics.combat.DamageOverflow.enter(bodyDamage, part, damage, damageType);
+        } catch (Throwable t) {
+            Log.errorOnce("overflowEnter", t);
+        }
+    }
+
+    public static void overflowExit(Object bodyDamage) {
+        try {
+            t3zedballistics.combat.DamageOverflow.exit(bodyDamage);
+        } catch (Throwable t) {
+            Log.errorOnce("overflowExit", t);
+        }
+    }
+
     // ---------------------------------------------------------------- hit packets (server, 42.22)
 
     public static void hitPacketEnter(Object playerHitPacket) {
