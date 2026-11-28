@@ -46,7 +46,7 @@ public final class BallisticsConfig {
     /** Server-wide switch for the shot / wound / network log lines (same output as the verbose + network switches). */
     public static volatile boolean debugLog = true;
 
-    // ---- gunplay on top of Project Viewpoint: Recoil & ADS (t3zedballistics.gunplay.AdsGunplay) ----
+    // ---- gunplay of the absorbed Recoil & ADS code (t3zedballistics.ads.Gunplay); players cannot override these ----
     public static volatile boolean gunplay = true;
     /** Sway multiplier at Aiming 0 and 10 (ADS's own curve is 1.35 -> 0.70). */
     public static volatile double swayAimingL0 = 2.0, swayAimingL10 = 0.35;
@@ -61,6 +61,10 @@ public final class BallisticsConfig {
     public static volatile double steadyRefillBase = 6.0, steadyRefillPerFitness = 0.2;
     /** Random dispersion kept on top of ADS's simulated hold while the sights are up (was 0.5). */
     public static volatile double adsSpreadScale = 0.0;
+    /** ADS handling, written over every player's ADS settings. */
+    public static volatile boolean adsInertia = true, adsRest = true, adsHideCrosshair = true, adsThirdPerson = true,
+        adsEyeBox = true, adsWeaponCollision = true;
+    public static volatile double adsRaiseSpeed = 1.0, adsSteadyZoom = 1.2, adsScopeZoom = 1.5;
 
     // ---- local developer switches ----
     public static volatile boolean debugTrajectories = false;
@@ -86,7 +90,8 @@ public final class BallisticsConfig {
         "HeadDamageShare", "DebugLog",
         "Gunplay", "SwayAimingL0", "SwayAimingL10", "RecoilAimingL0", "RecoilAimingL10", "RecoilRampMax",
         "RecoilRampTime", "SteadyCutL0", "SteadyCutL10", "SteadyHoldBase", "SteadyHoldPerFitness",
-        "SteadyRefillBase", "SteadyRefillPerFitness", "AdsSpreadScale", "ForceAdsSettings"
+        "SteadyRefillBase", "SteadyRefillPerFitness", "AdsSpreadScale", "AdsInertia", "AdsRaiseSpeed", "AdsRest",
+        "AdsHideCrosshair", "AdsThirdPerson", "AdsEyeBox", "AdsSteadyZoom", "AdsScopeZoom", "AdsWeaponCollision"
     };
     private static boolean sandboxWarned;
 
@@ -127,6 +132,15 @@ public final class BallisticsConfig {
             steadyRefillBase = num(so, "SteadyRefillBase", steadyRefillBase, 0.5, 30);
             steadyRefillPerFitness = num(so, "SteadyRefillPerFitness", steadyRefillPerFitness, 0, 2);
             adsSpreadScale = num(so, "AdsSpreadScale", adsSpreadScale, 0, 1);
+            adsInertia = bool(so, "AdsInertia", adsInertia);
+            adsRaiseSpeed = num(so, "AdsRaiseSpeed", adsRaiseSpeed, 0.5, 2);
+            adsRest = bool(so, "AdsRest", adsRest);
+            adsHideCrosshair = bool(so, "AdsHideCrosshair", adsHideCrosshair);
+            adsThirdPerson = bool(so, "AdsThirdPerson", adsThirdPerson);
+            adsEyeBox = bool(so, "AdsEyeBox", adsEyeBox);
+            adsSteadyZoom = num(so, "AdsSteadyZoom", adsSteadyZoom, 1, 1.5);
+            adsScopeZoom = num(so, "AdsScopeZoom", adsScopeZoom, 1, 2.5);
+            adsWeaponCollision = bool(so, "AdsWeaponCollision", adsWeaponCollision);
         } catch (Throwable t) {
             if (!sandboxWarned) { sandboxWarned = true; Log.error("reading sandbox options failed; defaults stay in use", t); }
         }
@@ -234,7 +248,10 @@ public final class BallisticsConfig {
             + " gunplay=" + gunplay + " sway L0/L10=" + swayAimingL0 + "/" + swayAimingL10
             + " recoil L0/L10=" + recoilAimingL0 + "/" + recoilAimingL10 + " ramp=" + recoilRampMax + "@" + recoilRampTime + "s"
             + " steadyCut=" + steadyCutL0 + "/" + steadyCutL10 + " hold=" + steadyHoldBase + "+" + steadyHoldPerFitness + "*fit"
-            + " refill=" + steadyRefillBase + "-" + steadyRefillPerFitness + "*fit adsSpread=" + adsSpreadScale;
+            + " refill=" + steadyRefillBase + "-" + steadyRefillPerFitness + "*fit adsSpread=" + adsSpreadScale
+            + " adsInertia=" + adsInertia + " raise=" + adsRaiseSpeed + " rest=" + adsRest + " hideCrosshair=" + adsHideCrosshair
+            + " thirdAds=" + adsThirdPerson + " eyeBox=" + adsEyeBox + " steadyZoom=" + adsSteadyZoom + " scopeZoom=" + adsScopeZoom
+            + " weaponCollision=" + adsWeaponCollision;
     }
 
     public static String[] sandboxKeys() { return SANDBOX_KEYS.clone(); }

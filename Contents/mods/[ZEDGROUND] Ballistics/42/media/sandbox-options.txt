@@ -302,10 +302,80 @@ option ZedBallistics.AdsSpreadScale
     translation = ZedBallistics_AdsSpreadScale,
 }
 
-option ZedBallistics.ForceAdsSettings
+option ZedBallistics.AdsInertia
 {
     type = boolean,
     default = true,
     page = ZedBallistics,
-    translation = ZedBallistics_ForceAdsSettings,
+    translation = ZedBallistics_AdsInertia,
+}
+
+option ZedBallistics.AdsRaiseSpeed
+{
+    type = double,
+    min = 0.5,
+    max = 2.0,
+    default = 1.0,
+    page = ZedBallistics,
+    translation = ZedBallistics_AdsRaiseSpeed,
+}
+
+option ZedBallistics.AdsRest
+{
+    type = boolean,
+    default = true,
+    page = ZedBallistics,
+    translation = ZedBallistics_AdsRest,
+}
+
+option ZedBallistics.AdsHideCrosshair
+{
+    type = boolean,
+    default = true,
+    page = ZedBallistics,
+    translation = ZedBallistics_AdsHideCrosshair,
+}
+
+option ZedBallistics.AdsThirdPerson
+{
+    type = boolean,
+    default = true,
+    page = ZedBallistics,
+    translation = ZedBallistics_AdsThirdPerson,
+}
+
+option ZedBallistics.AdsEyeBox
+{
+    type = boolean,
+    default = true,
+    page = ZedBallistics,
+    translation = ZedBallistics_AdsEyeBox,
+}
+
+option ZedBallistics.AdsSteadyZoom
+{
+    type = double,
+    min = 1.0,
+    max = 1.5,
+    default = 1.2,
+    page = ZedBallistics,
+    translation = ZedBallistics_AdsSteadyZoom,
+}
+
+option ZedBallistics.AdsScopeZoom
+{
+    type = double,
+    min = 1.0,
+    max = 2.5,
+    default = 1.5,
+    page = ZedBallistics,
+    translation = ZedBallistics_AdsScopeZoom,
+}
+
+option ZedBallistics.AdsWeaponCollision
+{
+    type = boolean,
+    default = true,
+    page = ZedBallistics,
+    translation = ZedBallistics_AdsWeaponCollision,
 }

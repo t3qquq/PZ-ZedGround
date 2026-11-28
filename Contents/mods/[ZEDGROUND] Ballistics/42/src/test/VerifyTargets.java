@@ -22,7 +22,7 @@ import me.zed_0xff.zombie_buddy.Patch;
 public class VerifyTargets {
     public static void main(String[] a) throws Exception {
         File modJar = new File(a[0]);
-        URLClassLoader game = new URLClassLoader(new URL[]{new File(a[1]).toURI().toURL(), new File(a[2]).toURI().toURL()}, null);
+        URLClassLoader game = new URLClassLoader(new URL[]{new File(a[1]).toURI().toURL(), new File(a[2]).toURI().toURL()}, ClassLoader.getPlatformClassLoader());
         int problems = 0, checked = 0;
         List<Class<?>> patches = new ArrayList<>();
         try (JarFile jf = new JarFile(modJar)) {

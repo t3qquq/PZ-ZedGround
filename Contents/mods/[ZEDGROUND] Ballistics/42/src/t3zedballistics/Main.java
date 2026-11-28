@@ -57,6 +57,17 @@ public class Main {
         if (!GameServer.server) {
             ViewpointBridge.init();
             if (ViewpointBridge.available) {
+                // Project Viewpoint: Recoil & ADS 1.9.1, absorbed (t3zedballistics.ads; hooks in AdsPatches).
+                try {
+                    t3zedballistics.ads.Log.info("Recoil & ADS 1.9.1 (absorbed into ZEDGROUND Ballistics) loading");
+                    t3zedballistics.ads.VP.init();
+                } catch (Throwable t) {
+                    Log.error("absorbed ADS failed to start; sights, recoil and sway are off", t);
+                }
+            } else {
+                Log.warn("Viewpoint not available: absorbed ADS stays off.");
+            }
+            if (ViewpointBridge.available) {
                 check("viewpoint.input.CrosshairAim", "snapshot", "Viewpoint camera hook", false);
                 check("viewpoint.render.WorldRenderer", "drawWeather", "Viewpoint 3D debug drawing", false);
                 if (!"0.1.5".equals(ViewpointBridge.version))

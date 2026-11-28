@@ -1,0 +1,11 @@
+{
+  "UI_optionscreen_binding_ProjectViewpointADS": "제드그라운드 탄도 - 조준",
+  "UI_optionscreen_binding_ProjectViewpointADS:ADS": "조준선 올리기 (ADS)",
+  "UI_optionscreen_binding_ProjectViewpointADS:ZoomIn": "조준경 확대",
+  "UI_optionscreen_binding_ProjectViewpointADS:ZoomOut": "조준경 축소",
+  "UI_optionscreen_binding_ProjectViewpointADS:ZeroUp": "영점 올리기",
+  "UI_optionscreen_binding_ProjectViewpointADS:ZeroDown": "영점 내리기",
+  "UI_optionscreen_binding_ProjectViewpointADS:Calibrator": "조준 보정 창",
+  "UI_optionscreen_binding_ProjectViewpointADS:Steady": "숨참기",
+  "UI_optionscreen_binding_ProjectViewpointADS:Bipod": "양각대 펴기 / 접기"
+}

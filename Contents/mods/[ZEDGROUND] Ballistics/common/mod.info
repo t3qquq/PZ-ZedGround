@@ -1,11 +1,12 @@
 name=[ZEDGROUND] Ballistics
 id=t3ZedBallistics
-description=실제 탄환 탄도학 (Viewpoint True Ballistics 1.4.6 by Matthew 를 42.22 용으로 포팅). 탄환이 총구에서 나가 조준점으로 수렴하고, 날아가며 떨어지고, 벽에 막히고, 맞은 부위에 명중합니다. 데미지·탄약·소리·반동은 바닐라 그대로이며 서버 명중 검증을 포함합니다.
-author=Matthew (Viewpoint True Ballistics), t3qquq (42.22 port)
+description=실제 탄환 탄도학 + 조준 시스템 (Viewpoint True Ballistics 1.4.6, Project Viewpoint: Recoil & ADS 1.9.1 by Matthew 흡수·42.22 포팅). 탄환이 총구에서 나가 조준선으로 날아가고, 떨어지고, 벽에 막히고, 맞은 부위에 명중합니다. 가늠쇠·PiP 조준경·영점·거치·양각대를 포함하며, 흔들림·반동·숨참기는 사격·체력 스킬과 서버 샌드박스로 정해집니다 (개인 설정으로 바꿀 수 없음). 서버 명중 검증 포함. 원본 Recoil & ADS와 함께 켜지 마세요.
+author=Matthew (Viewpoint True Ballistics, Project Viewpoint: Recoil & ADS), t3qquq (42.22 port, ZEDGROUND gunplay)
 versionMin=42.22
-modversion=1.4.6-zg4
+modversion=1.5.0-zg5
 require=\ZombieBuddy,\Viewpoint
-loadModAfter=Viewpoint,ProjectViewpointADS,VFExpansion1,VFExpansion2,VFExpansion3
+loadModAfter=Viewpoint,VFExpansion1,VFExpansion2,VFExpansion3
+incompatible=\ProjectViewpointADS
 javaJarFile=media/java/ZedBallistics.jar
 javaPkgName=t3zedballistics
 ZBVersionMin=2.3.0
