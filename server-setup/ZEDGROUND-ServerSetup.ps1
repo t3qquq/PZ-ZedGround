@@ -4,7 +4,7 @@
 #   or your own copy such as API-Test.bat).
 #   Install: copies next to that .bat
 #              HaloDropAgent.jar              ([ZEDGROUND] HALO Drop: terrain preloading while falling)
-#              ZombieBuddy.jar + zbNative.dll (Java mods on the server: [ZEDGROUND] Ballistics hit validation)
+#              ZombieBuddy.jar + zbNative.dll (Java mods on the server: [ZEDGROUND] GunWorks hit validation)
 #            and puts on its java line
 #              -javaagent:"<full path>\HaloDropAgent.jar"
 #              -agentpath:"<full path>\zbNative.dll"=policy=allow-all
@@ -251,7 +251,7 @@ function Install([string]$batFile) {
     Say ('Done. Start the server with ' + [System.IO.Path]::GetFileName($batFile) + ' as usual.')
     Say 'Check <your user folder>\Zomboid\server-console.txt for:'
     Say '  "[HaloDropAgent] registered HaloDropNative.state/preload"'
-    Say '  "[ZedBallistics] ... loading (dedicated server)"'
+    Say '  "[GunWorks] ... loading (dedicated server)"'
 }
 
 function Remove([string]$batFile) {
