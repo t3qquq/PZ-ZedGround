@@ -22,7 +22,7 @@ import zombie.inventory.types.HandWeapon;
  */
 public final class BallisticsAPI {
 
-    public static final String VERSION = "1.4.6-zg3";
+    public static final String VERSION = "1.4.6-zg4";
 
     /** Resolved ballistic profile of a weapon (ammo name + stats + registered overrides). */
     public static BallisticProfile getWeaponProfile(HandWeapon weapon) {

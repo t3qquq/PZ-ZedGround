@@ -46,6 +46,22 @@ public final class BallisticsConfig {
     /** Server-wide switch for the shot / wound / network log lines (same output as the verbose + network switches). */
     public static volatile boolean debugLog = true;
 
+    // ---- gunplay on top of Project Viewpoint: Recoil & ADS (t3zedballistics.gunplay.AdsGunplay) ----
+    public static volatile boolean gunplay = true;
+    /** Sway multiplier at Aiming 0 and 10 (ADS's own curve is 1.35 -> 0.70). */
+    public static volatile double swayAimingL0 = 2.0, swayAimingL10 = 0.35;
+    /** Recoil multiplier at Aiming 0 and 10 (ADS has none). */
+    public static volatile double recoilAimingL0 = 1.8, recoilAimingL10 = 0.8;
+    /** Sideways kick multiplier reached after recoilRampTime seconds of a held burst. */
+    public static volatile double recoilRampMax = 1.7, recoilRampTime = 1.5;
+    /** Share of the sway steady aim removes at Aiming 0 and 10 (ADS: 0.88 for everyone). */
+    public static volatile double steadyCutL0 = 0.70, steadyCutL10 = 0.92;
+    /** Breath hold seconds = base + perFitness * Fitness; refill seconds = base - perFitness * Fitness. */
+    public static volatile double steadyHoldBase = 2.0, steadyHoldPerFitness = 0.3;
+    public static volatile double steadyRefillBase = 6.0, steadyRefillPerFitness = 0.2;
+    /** Random dispersion kept on top of ADS's simulated hold while the sights are up (was 0.5). */
+    public static volatile double adsSpreadScale = 0.0;
+
     // ---- local developer switches ----
     public static volatile boolean debugTrajectories = false;
     public static volatile boolean debugImpacts = false;
@@ -67,7 +83,10 @@ public final class BallisticsConfig {
         "Enabled", "UseInIsoView", "GravityScale", "VelocityScale", "DragScale", "DamageFalloff",
         "ProjectileLifetime", "MaxDistanceMultiplier", "MaxDistanceCap", "Penetration", "HitLocations",
         "ZeroDistance", "SpreadScale", "ServerValidation", "FurnitureCollision", "OverflowDamage",
-        "HeadDamageShare", "DebugLog"
+        "HeadDamageShare", "DebugLog",
+        "Gunplay", "SwayAimingL0", "SwayAimingL10", "RecoilAimingL0", "RecoilAimingL10", "RecoilRampMax",
+        "RecoilRampTime", "SteadyCutL0", "SteadyCutL10", "SteadyHoldBase", "SteadyHoldPerFitness",
+        "SteadyRefillBase", "SteadyRefillPerFitness", "AdsSpreadScale", "ForceAdsSettings"
     };
     private static boolean sandboxWarned;
 
@@ -94,6 +113,20 @@ public final class BallisticsConfig {
             overflowDamage = bool(so, "OverflowDamage", overflowDamage);
             headDamageShare = num(so, "HeadDamageShare", headDamageShare, 0.1, 2);
             debugLog = bool(so, "DebugLog", debugLog);
+            gunplay = bool(so, "Gunplay", gunplay);
+            swayAimingL0 = num(so, "SwayAimingL0", swayAimingL0, 0, 6);
+            swayAimingL10 = num(so, "SwayAimingL10", swayAimingL10, 0, 6);
+            recoilAimingL0 = num(so, "RecoilAimingL0", recoilAimingL0, 0, 5);
+            recoilAimingL10 = num(so, "RecoilAimingL10", recoilAimingL10, 0, 5);
+            recoilRampMax = num(so, "RecoilRampMax", recoilRampMax, 1, 4);
+            recoilRampTime = num(so, "RecoilRampTime", recoilRampTime, 0, 5);
+            steadyCutL0 = num(so, "SteadyCutL0", steadyCutL0, 0, 1);
+            steadyCutL10 = num(so, "SteadyCutL10", steadyCutL10, 0, 1);
+            steadyHoldBase = num(so, "SteadyHoldBase", steadyHoldBase, 0.5, 15);
+            steadyHoldPerFitness = num(so, "SteadyHoldPerFitness", steadyHoldPerFitness, 0, 2);
+            steadyRefillBase = num(so, "SteadyRefillBase", steadyRefillBase, 0.5, 30);
+            steadyRefillPerFitness = num(so, "SteadyRefillPerFitness", steadyRefillPerFitness, 0, 2);
+            adsSpreadScale = num(so, "AdsSpreadScale", adsSpreadScale, 0, 1);
         } catch (Throwable t) {
             if (!sandboxWarned) { sandboxWarned = true; Log.error("reading sandbox options failed; defaults stay in use", t); }
         }
@@ -197,7 +230,11 @@ public final class BallisticsConfig {
             + " maxDist=" + maxDistanceMultiplier + "x/cap " + maxDistanceCap + " penetration=" + penetration
             + " hitLocations=" + hitLocations + " zero=" + zeroDistance + " spread=" + spreadScale
             + " serverValidation=" + serverValidation + " furniture=" + furnitureCollision
-            + " overflow=" + overflowDamage + " headShare=" + headDamageShare + " debugLog=" + debugLog;
+            + " overflow=" + overflowDamage + " headShare=" + headDamageShare + " debugLog=" + debugLog
+            + " gunplay=" + gunplay + " sway L0/L10=" + swayAimingL0 + "/" + swayAimingL10
+            + " recoil L0/L10=" + recoilAimingL0 + "/" + recoilAimingL10 + " ramp=" + recoilRampMax + "@" + recoilRampTime + "s"
+            + " steadyCut=" + steadyCutL0 + "/" + steadyCutL10 + " hold=" + steadyHoldBase + "+" + steadyHoldPerFitness + "*fit"
+            + " refill=" + steadyRefillBase + "-" + steadyRefillPerFitness + "*fit adsSpread=" + adsSpreadScale;
     }
 
     public static String[] sandboxKeys() { return SANDBOX_KEYS.clone(); }

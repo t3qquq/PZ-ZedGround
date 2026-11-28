@@ -133,7 +133,7 @@ public final class CrosshairOverride {
             }
         }
 
-        double sigma = Spread.sigmaRadians(p, w, prof) * (ads ? AimProvider.ADS_SPREAD : 1.0);
+        double sigma = Spread.sigmaRadians(p, w, prof) * (ads ? BallisticsConfig.adsSpreadScale : 1.0);
         double cone = prof.pelletCount > 1 ? Math.toRadians(prof.pelletSpreadDeg) : 0.0;
         ringRadians = 2.0 * sigma + cone;
         targetFlag = aimedAtBody(p, w, prof);

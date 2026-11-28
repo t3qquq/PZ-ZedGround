@@ -31,8 +31,8 @@ public final class AimProvider {
     private final V3 start = new V3(), end = new V3(), head = new V3(), chest = new V3();
     private final double[] sight = new double[7];
     private final double[] sway = new double[2];
-    /** Share of the skill/moodle dispersion kept while aiming through Project Viewpoint ADS sights. */
-    public static final double ADS_SPREAD = 0.5;
+    /** Old fixed ADS dispersion share; now BallisticsConfig.adsSpreadScale (sandbox AdsSpreadScale, default 0). */
+    @Deprecated public static final double ADS_SPREAD = 0.5;
 
     public boolean solve(IsoPlayer p, HandWeapon w, BallisticProfile prof, double maxDistance, double v0,
                          double gravity, double drag, ProjectileCollision collision, AimSolution out) {
@@ -120,8 +120,8 @@ public final class AimProvider {
         ProjectilePhysics.pitchUp(out.direction, out.zeroAngle);
         out.sigma = Spread.sigmaRadians(p, w, prof);
         // Through ADS sights the shooter's hold (sway, breathing, recoil) is already simulated by ADS and the
-        // round follows that real sight line, so only part of the skill-based dispersion is added on top.
-        if (out.adsSight) out.sigma *= ADS_SPREAD;
+        // round follows that real sight line; ZEDGROUND gunplay drives that hold, so by default nothing is added.
+        if (out.adsSight) out.sigma *= BallisticsConfig.adsSpreadScale;
         // Viewpoint 0.1.6 Gunplay Rework (hip fire): the crosshair's wander inside the aim ring already is the
         // skill/hit-chance dispersion, so the round leaves exactly along the crosshair and nothing is added.
         else if (out.gunplay) out.sigma = 0;
